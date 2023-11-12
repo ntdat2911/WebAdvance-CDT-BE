@@ -11,11 +11,10 @@ exports.checkEmail = async(email) => {
 }
 
 exports.register = async (fullname, email, password)=>{
-    if(await authorizeRepository.phonenumberExists(phonenumber))
-        throw new Error('Phone number is exists!');
-    if(await authorizeRepository.emailExists(email))
-        throw new Error('Email is exists!');
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-    await authorizeRepository.insertUser(fullname, email, hash);
+    // if(await authorizeRepository.phonenumberExists(phonenumber))
+    //     throw new Error('Phone number is exists!');
+    // if(await authorizeRepository.emailExists(email))
+    //     throw new Error('Email is exists!');
+    
+    await authorizeRepository.insertUser(fullname, email, password);
 }

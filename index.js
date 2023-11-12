@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 
 //const session = require('express-session');
 const authRoutes = require("./components/_auth");
+const userRoutes = require("./components/users");
 
 const app = express();
 const PORT = process.env.PORT || 5000; 
@@ -30,13 +31,8 @@ app.get('/', (req, res) => {
 //app.use(passport.authenticate('session'));
 
 app.use('/auth', authRoutes);
-app.post('/api/stuff', (req, res, next) => {
-    console.log('test');
-    console.log(req.body); // after parsing req.body will be json , from front end we need not to stringify and do other stuff
-    res.status(201).json({
-        message: 'Objet créé !'
-    });
-});
+app.use('/', userRoutes);
+
 app.listen(PORT, () => console.log(`Server running at ${PORT}`));
 
 module.exports = app;
