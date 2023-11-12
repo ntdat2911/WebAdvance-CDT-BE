@@ -4,11 +4,11 @@ const db = { connection: null };
 
 (async () => {
   db.connection = await mysql.createConnection({
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: "chien401",
-    database: "advanced_web",
+    host: "mysql-154148-0.cloudclusters.net",
+    port: 18702,
+    user: "admin",
+    password: "vQTZYNiT",
+    database: "advanceweb",
   });
   console.log("Database connected!");
 })();

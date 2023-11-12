@@ -4,8 +4,7 @@ const verifyToken = require("../../middleware/auth")
 require('dotenv').config()
 
 exports.register = async (req, res) => {
-    console.log(req.body)
-    res.send("Recive" + req.body.email);
+    const user = await authorizeService.register(req.body.fullname,req.body.email, req.body.password )
 }
 
 exports.login = async (req, res) => {
@@ -18,6 +17,9 @@ exports.login = async (req, res) => {
 
     const accessToken = jwt.sign({email: user.email}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15s'})
     res.cookie("token", accessToken);
-    res.json("Success");
+    res.json({
+        fullname: user.name,
+        accessToken: accessToken
+    });
     //res.json({accessToken})
 }

@@ -1,7 +1,9 @@
 const db = require('../../db/index');
 
 exports.getUserByEmail = async(email) => {
+    console.log(email)
     const result = await db.connection.execute("select * from accounts where email like ? limit 1", [email]);
+    console.log(result)
     return result[0] && result[0][0];
 }
 
@@ -15,6 +17,6 @@ exports.emailExists = async(email) => {
     return result[0].length > 0;
 }
 
-exports.insertUser = async(fullname, phonenumber, email, hash) => {
-    await db.connection.execute('insert into accounts (PHONENUMBER,PASSWORD,FULLNAME,EMAIL,CREATEDDATE,LEVEL,IMAGE,BUDGET,ACTIVE,VERIFIED) VALUES (?,?,?,?,?,?,?,?,?,?)',[phonenumber, hash, fullname, email, moment().format(),'Bronze','default-user.jpg','0','1','0']);
+exports.insertUser = async(fullname, email, hash) => {
+    await db.connection.execute('insert into accounts (PASSWORD,FULLNAME, EMAIL, IMAGE) VALUES (?,?,?,?)',[hash, fullname, email,'default-user.jpg']);
 }
