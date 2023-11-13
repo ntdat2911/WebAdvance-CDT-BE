@@ -5,20 +5,19 @@ const bcrypt = require('bcrypt');
 require('dotenv').config()
 
 exports.register = async (req, res) => {
-    try {
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(req.body.password, salt);
-        const user = await authorizeService.register(req.body.fullname, req.body.email, hash)
-      
-        res.status(200).json(user);
 
-    } catch (error) {
-        res.status(500).json(error)
-    }
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(req.body.password, salt);
+    const user = await authorizeService.register(req.body.fullname, req.body.email, hash)
+    console.log(user + "Controller")
+    if (user.insertId)
+        res.status(200).json("Insert Successfully");
+    else res.status(500).json("Insert Error");
+
 }
 
 exports.login = async (req, res) => {
-    
+
     const user = await authorizeService.getUserByEmail(req.body.email);
 
     if (!user) {

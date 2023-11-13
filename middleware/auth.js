@@ -6,7 +6,6 @@ exports.verifyToken = (req, res, next) => {
     const authHeader = req.headers.token;
     console.log(req.headers.token);
     const token = authHeader && authHeader.split(" ")[1];
-    console.log(token + " My token acess")
     try {
         if (token) {
             jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
