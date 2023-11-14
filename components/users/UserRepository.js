@@ -1,6 +1,18 @@
-const db = require('../../db/index');
+const db = require("../../db/index");
 
-exports.getAllUsers = async() => {
-    const result = await db.connection.execute("select * from accounts");
-    return result[0].length > 0 ? result[0] : null;
-}
+exports.getUser = async (id) => {
+  const result = await db.connection.execute(
+    "select * from accounts where id = ?",
+    [id]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+
+exports.updateUser = async (name, email, image, id) => {
+  const result = await db.connection.execute(
+    "update accounts set fullname=?,email=?,image=? where id=?",
+    [name, email, image, id]
+  );
+  console.log(result[0]);
+  return result[0];
+};

@@ -1,5 +1,9 @@
-const userRepository = require('./UserRepository');
+const userRepository = require("./UserRepository");
 
-exports.getAllUsers = async() => {
-    return await userRepository.getAllUsers();
-}
+exports.getUser = async (id) => {
+  return await userRepository.getUser(id);
+};
+
+exports.updateUser = async (id, name, email, avatar) => {
+  return await userRepository.updateUser(name, email, avatar, id);
+};

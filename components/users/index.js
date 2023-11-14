@@ -1,9 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const userController = require('./UserController');
-const middlewareToken = require('../../middleware/auth');
+const userController = require("./UserController");
+const middlewareToken = require("../../middleware/auth");
 
-router.get("/home-page", middlewareToken.verifyToken, userController.getAll);
+router.get(
+  "/getUser/:id",
+  middlewareToken.verifyToken,
+  userController.getOneUser
+);
+router.post("/update", middlewareToken.verifyToken, userController.update);
 
 module.exports = router;
