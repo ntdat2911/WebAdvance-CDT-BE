@@ -4,13 +4,12 @@ require('dotenv').config();
 
 exports.verifyToken = (req, res, next) => {
     const authHeader = req.headers.token;
-    console.log(req.headers.token);
     const token = authHeader && authHeader.split(" ")[1];
     try {
         if (token) {
             jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
                 if (err) {
-                    res.status(403).json("Token is not valid")
+                    res.json("Token is not valid")
                 } else {
                     req.user = user;
                     next();

@@ -12,12 +12,10 @@ exports.phonenumberExists = async(phonenumber) => {
 
 exports.emailExists = async(email) => {
     const result = await db.connection.execute('select email from accounts where email = ? limit 1', [email]);
-    console.log(result)
     return result[0].length > 0;
 }
 
 exports.insertUser = async(fullname, email, hash) => {
-    const result = await db.connection.execute('insert into accounts (PASSWORD,FULLNAME, EMAIL, IMAGE) VALUES (?,?,?,?)',[hash, fullname, email,'default-user.jpg']);
-    console.log(result[0]);
+    const result = await db.connection.execute('insert into accounts (PASSWORD,FULLNAME, EMAIL, IMAGE) VALUES (?,?,?,?)',[hash, fullname, email,'default-user.png']);
     return result[0];
 }
