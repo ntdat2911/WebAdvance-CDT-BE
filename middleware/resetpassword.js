@@ -7,7 +7,7 @@ exports.verifyToken = (req, res, next) => {
     const token = authHeader && authHeader.split(" ")[1];
     try {
         if (token) {
-            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+            jwt.verify(token, process.env.ACCESS_TOKEN_RESET_PASSWORD_SECRET, (err, user) => {
                 if (err) {
                     res.json("Token is not valid")
                 } else {                   
