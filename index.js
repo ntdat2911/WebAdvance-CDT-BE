@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 //const session = require('express-session');
 const authRoutes = require("./components/_auth");
 const userRoutes = require("./components/users");
+const verifyRoutes = require("./components/verify")
 
 const app = express();
 const PORT = process.env.PORT || 5000; 
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
 
 app.use('/auth', authRoutes);
 app.use('/', userRoutes);
+app.use("/auth", verifyRoutes);
 
 app.listen(PORT, () => console.log(`Server running at ${PORT}`));
 

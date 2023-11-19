@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 require('dotenv').config()
 
 exports.register = async (req, res) => {
-
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(req.body.password, salt);
     const user = await authorizeService.register(req.body.fullname, req.body.email, hash);
@@ -21,23 +20,28 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
 
     const user = await authorizeService.getUserByEmail(req.body.email);
-
+    console.log(user.verified + " VERIFY")
     if (!user) {
         res.json("No user found");
     } else {
-        const validPassword = await bcrypt.compare(req.body.password, user[0].password);
-        if (!validPassword) {
-            res.json("Wrong password");
+        if (user[0].verified == 0) {
+            res.json("Email is not verified");
         } else {
-            const accessToken = jwt.sign({ email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' })
-            //res.cookie("token", accessToken);
-            delete user[0].password;
+            const validPassword = await bcrypt.compare(req.body.password, user[0].password);
+            if (!validPassword) {
+                res.json("Wrong password");
+            } else {
+                const accessToken = jwt.sign({ email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' })
+                //res.cookie("token", accessToken);
+                delete user[0].password;
 
-            res.json({
-                user,
-                accessToken
-            });
+                res.json({
+                    user,
+                    accessToken
+                });
+            }
         }
+
     }
 }
 
