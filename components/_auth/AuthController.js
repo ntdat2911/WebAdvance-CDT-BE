@@ -1,6 +1,8 @@
 const authorizeService = require('./AuthService');
 const jwt = require("jsonwebtoken")
 const bcrypt = require('bcrypt');
+const passport = require('./passport'); 
+
 require('dotenv').config()
 
 exports.register = async (req, res) => {
@@ -44,6 +46,23 @@ exports.login = async (req, res) => {
 
     }
 }
+
+exports.loginGG = (req, res) => {
+    console.log("Co ng dang nhap")
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+}
+
+exports.loginGGCallback = (req, res) => {
+    passport.authenticate('google', { session: false }),
+    (req, res) => {
+        const user = req.user;
+        console.log(user)
+        const token = jwt.sign({ email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' });
+        res.json({ user, token });
+    }
+}
+
+
 
 exports.logout = async (req, res) => {
     const authHeader = req.headers.token;
