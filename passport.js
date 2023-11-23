@@ -3,6 +3,22 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 require('dotenv').config();
 
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: 'http://localhost:5000/auth/google/callback',
+}, (accessToken, refreshToken, profile, done) => {
+    
+    const user = {
+        googleId: profile.id,
+        displayName: profile.displayName,
+        email: profile.emails[0].value
+    };
+
+    console.log(user);
+    return done(null, user);
+}));
+
 passport.serializeUser((user, done) => {
     done(null, user);
 });
@@ -10,20 +26,5 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((user, done) => {
     done(null, user);
 });
-
-passport.use(new GoogleStrategy({
-    clientID: "313494158170-udp5jf7a8fcu45k10e853vmdi7jc449f.apps.googleusercontent.com",
-    clientSecret: "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",
-    callbackURL: 'http://localhost:5000/auth/google/callback',
-}, (accessToken, refreshToken, profile, done) => {
-    console.log(user + "Toi day r")
-    const user = {
-        googleId: profile.id,
-        displayName: profile.displayName,
-        // Thêm thông tin khác nếu cần
-    };
-    return done(null, user);
-}));
-
 
 module.exports = passport;
