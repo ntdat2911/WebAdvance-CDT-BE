@@ -5,9 +5,10 @@ exports.getUserByEmail = async(email) => {
     return await authorizeRepository.getUserByEmail(email);
 }
 
-exports.checkEmail = async(email) => {
-    if(!await authorizeRepository.emailExists(email))
-        throw new Error('Email is not exists!');
+exports.checkEmailExists = async(email) => {
+    if(await authorizeRepository.emailExists(email))
+        return true;
+    else return false;
 }
 
 exports.register = async (fullname, email, password)=>{
@@ -18,3 +19,4 @@ exports.register = async (fullname, email, password)=>{
     
     return await authorizeRepository.insertUser(fullname, email, password);
 }
+
