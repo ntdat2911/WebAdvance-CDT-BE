@@ -4,10 +4,10 @@ const db = { connection: null };
 
 (async () => {
   db.connection = await mysql.createConnection({
-    host: "advancedweb.mysql.database.azure.com",
-    port: 3306,
-    user: "advancedweb",
-    password: "web@1234",
+    host: "mysql-155584-0.cloudclusters.net",
+    port: 17435,
+    user: "admin",
+    password: "szOyk8rA",
     database: "advanceweb",
   });
   console.log("Database connected!");
