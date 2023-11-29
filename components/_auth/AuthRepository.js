@@ -16,6 +16,6 @@ exports.emailExists = async(email) => {
 }
 
 exports.insertUser = async(fullname, email, hash) => {
-    const result = await db.connection.execute('insert into accounts (PASSWORD,FULLNAME, EMAIL, IMAGE, VERIFIED) VALUES (?,?,?,?,?)',[hash, fullname, email,'default-user.png', '0']);
+    const result = await db.connection.execute('insert into accounts (PASSWORD,FULLNAME, EMAIL, IMAGE, ROLE, ACTIVE, VERIFIED) VALUES (?,?,?,?,?,?,?)',[hash, fullname, email,'default-user.png', 2, 1, '0']);
     return result[0];
 }
