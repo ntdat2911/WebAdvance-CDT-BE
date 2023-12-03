@@ -14,9 +14,8 @@ exports.checkEmailExists = async(email) => {
 exports.register = async (fullname, email, password)=>{
     // if(await authorizeRepository.phonenumberExists(phonenumber))
     //     throw new Error('Phone number is exists!');
-    if(await authorizeRepository.emailExists(email))
-        return 'Email exists';
     
     return await authorizeRepository.insertUser(fullname, email, password);
 }
+
 

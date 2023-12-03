@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const jwt_decode = require("jwt-decode");
 
 require('dotenv').config();
 
@@ -7,20 +8,31 @@ exports.verifyToken = (req, res, next) => {
     const token = authHeader && authHeader.split(" ")[1];
     try {
         if (token) {
-            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
                 if (err) {
-                    res.json("Token is not valid")
-                } else {                   
-                    next();
+                    res.status(401).json("Token is not valid");
+                } else {   
+                    const userRole = decoded.role;
+                    console.log(userRole)
+                    console.log(req.url);
+                    if (userRole == "admin") {
+                        console.log("Vao duoc admin");
+                        next();
+                    } else if (userRole == "teacher" && req.url.startsWith("/teacher")) {
+                        console.log("Vao duoc teacher");
+                        next();
+                    } else if (userRole == "student" && req.url.startsWith("/student")) {
+                        console.log("Vao duoc stydebt");
+                        next();
+                    } else {
+                        res.status(403).json("You do not have the necessary permissions to access this resource.");
+                    }
                 }
-            })
+            });
         } else {
             return res.status(401).json("You're not authenticated");
         }
-
-
     } catch (error) {
-        return res.sendStatus(403)
+        return res.sendStatus(403);
     }
-
-}
+};

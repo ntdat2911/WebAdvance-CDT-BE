@@ -9,6 +9,8 @@ const userRoutes = require("./components/users");
 const verifyRoutes = require("./components/verify")
 const adminRoutes = require("./components/admin");
 
+const middleware = require("./middleware/auth");
+
 const app = express();
 const PORT = process.env.PORT || 5000; 
 
@@ -41,7 +43,7 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/', userRoutes);
 app.use("/auth", verifyRoutes);
-app.use("/admin", adminRoutes);
+app.use("/admin", middleware.verifyToken, adminRoutes);
 
 app.listen(PORT, () => console.log(`Server running at ${PORT}`));
 
