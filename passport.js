@@ -19,11 +19,10 @@ passport.use(new GoogleStrategy({
     return done(null, user);
 }));
 
-passport.use('facebook-token', new FacebookTokenStrategy({
+passport.use(new FacebookTokenStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
-    //callbackURL: '/auth/facebook/callback',
-    //profileFields: ['id', 'displayName', 'email']
+    fbGraphVersion: 'v10.0',
 },
     (accessToken, refreshToken, profile, done) => {
         console.log(profile)

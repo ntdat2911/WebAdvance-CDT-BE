@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const passport = require('../../passport');
 
 const CLIENT_URL = "http://localhost:3000/";
-require('dotenv').config()
+require('dotenv').config();
 
 exports.register = async (req, res) => {
     if (await authorizeService.checkEmailExists(req.body.email)) {
@@ -69,15 +69,17 @@ exports.authenticateFacebook = passport.authenticate('facebook', {
 
 exports.responseGoogle = async (req, res) => {
     const email = req.user.email;
+    const displayName = req.user.displayName;
     if (await authorizeService.checkEmailExists(email)) {
-        res.redirect(`${CLIENT_URL}/sign-in?exists=true`);
+        res.redirect(`${CLIENT_URL}/auth/sign-in?exists=true`);
     } else {
         const password = "gooogle account"
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
-        const user = await authorizeService.register(user.displayName, user.email, hash);
+        const user = await authorizeService.register(displayName, email, hash);
+        const sendUser = {email: email, fullname: displayName}
         const token = jwt.sign({ email: email, role: "student" }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' });
-        res.redirect(`${CLIENT_URL}/home-page?token=${token}&user=${encodeURIComponent(JSON.stringify(user))}`);
+        res.redirect(`${CLIENT_URL}/home-page?token=${token}&user=${encodeURIComponent(JSON.stringify(sendUser))}`);
     }
 
 }
@@ -96,6 +98,13 @@ exports.facebookCallback = async (req, res) => {
         res.redirect(`${CLIENT_URL}/home-page?token=${token}&user=${encodeURIComponent(JSON.stringify(user))}`);
     }
 };
+
+exports.loginWithFacebookRedirect = (req, res) => {
+    const { access_token } = req.query;
+  
+    // Chuyển hướng với access token (hoặc xử lý nó theo nhu cầu của bạn)
+    res.redirect(`http://localhost:3000/auth/facebook/callback?access_token=${access_token}`);
+  };
 
 exports.logout = async (req, res) => {
     const authHeader = req.headers.token;
