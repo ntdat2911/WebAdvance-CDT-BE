@@ -14,7 +14,7 @@ const middleware = require("./middleware/auth");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+const CLIENT_HOST = process.env.CLIENT_HOST || "http://localhost:3000";
 require("dotenv").config();
 
 app.use(express.json());
@@ -22,7 +22,7 @@ app.use(express.urlencoded());
 app.use(express.json({ strict: false }));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: { CLIENT_HOST },
     methods: "GET, POST, PUT, DELETE",
     credentials: true,
   })
