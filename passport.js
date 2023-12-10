@@ -1,6 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const FacebookTokenStrategy = require('passport-facebook-token');
+const FacebookStrategy = require('passport-facebook');
 
 require('dotenv').config();
 
@@ -19,10 +19,11 @@ passport.use(new GoogleStrategy({
     return done(null, user);
 }));
 
-passport.use(new FacebookTokenStrategy({
+passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
-    fbGraphVersion: 'v10.0',
+    callbackURL: 'http://localhost:5000/auth/facebook/callback',
+    profileFields: ['id', 'displayName', 'email'],
 },
     (accessToken, refreshToken, profile, done) => {
         console.log(profile)

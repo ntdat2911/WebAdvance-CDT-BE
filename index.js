@@ -3,7 +3,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const passport = require("./passport");
-//const session = require('express-session');
+const session = require('express-session');
 const authRoutes = require("./components/_auth");
 const userRoutes = require("./components/users");
 const verifyRoutes = require("./components/verify");
@@ -34,14 +34,15 @@ app.get("/", (req, res) => {
   res.send("Hello");
 });
 
-// app.use(session({
-//     secret: 'very secret keyboard cat',
-//     resave: false,
-//     saveUninitialized: false,
-// }));
+app.use(session({
+    secret: 'very secret keyboard cat',
+    resave: false,
+    saveUninitialized: false,
+}));
 
 //app.use(passport.authenticate('session'));
-
+app.use(passport.initialize());
+app.use(passport.session());
 app.use("/auth", authRoutes);
 app.use("/", userRoutes);
 app.use("/auth", verifyRoutes);
