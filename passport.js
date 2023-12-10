@@ -26,13 +26,12 @@ passport.use(new FacebookStrategy({
     profileFields: ['id', 'displayName', 'email'],
 },
     (accessToken, refreshToken, profile, done) => {
-        console.log(profile)
         const user = {
             facebookId: profile.id,
             displayName: profile.displayName,
             //email: profile.emails[0].value
         };
-        console.log("Dang nhap facebook !");
+  
         return done(null, user);
     }
 ));

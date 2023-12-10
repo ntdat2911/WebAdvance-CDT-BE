@@ -16,7 +16,8 @@ exports.register = async (req, res) => {
         const user = await authorizeService.register(
             req.body.fullname,
             req.body.email,
-            hash
+            hash,
+            false
         );
         res.status(200).json("Insert Successfully");
     }
@@ -84,43 +85,43 @@ exports.authenticateFacebook = passport.authenticate("facebook", {
     failureRedirect: CLIENT_URL + "sign-in",
 });
 
-exports.responseGoogle = async (req, res) => {
+exports.callbackGoogle = async (req, res) => {
     const email = req.user.email;
     const displayName = req.user.displayName;
-    if (await authorizeService.checkEmailExists(email)) {
-        res.redirect(`${CLIENT_URL}/auth/sign-in?exists=true`);
-    } else {
-        const password = "gooogle account";
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(password, salt);
-        const user = await authorizeService.register(displayName, email, hash);
-        const sendUser = { email: email, fullname: displayName };
-        const token = jwt.sign(
-            { email: email, role: "student" },
-            process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "2h" }
-        );
-        res.redirect(
-            `${CLIENT_URL}/home-page?token=${token}&user=${encodeURIComponent(
-                JSON.stringify(sendUser)
-            )}`
-        );
+    const password = "gooogle account";
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+
+    if (!await authorizeService.checkIsSocial(email)) {
+        await authorizeService.register(displayName, email, hash, true);
     }
+    const sendUser = { email: email, fullname: displayName };
+    const token = jwt.sign(
+        { email: email, role: "student" },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "2h" }
+    );
+    res.redirect(
+        `${CLIENT_URL}/auth/middle-page?token=${token}&user=${encodeURIComponent(
+            JSON.stringify(sendUser)
+        )}`
+    );
+
 };
 
-exports.facebookCallback = async (req, res) => {
-
+exports.callbackFacebook = async (req, res) => {
     const user = {
         ...req.user,
         fullname: req.user.displayName,
     };
-
     delete user.displayName;
 
     const password = "facebook account";
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
-    //const user = await authorizeService.registerSocial(user.fullname, user.email, hash);
+    if (!await authorizeService.checkIsSocial(user.facebookId)) {
+        await authorizeService.register(user.fullname, user.facebookId, hash, true);
+    }
 
     const token = jwt.sign(
         { fullname: user.fullname, role: "student" },
@@ -128,7 +129,7 @@ exports.facebookCallback = async (req, res) => {
         { expiresIn: "2h" }
     );
     res.redirect(
-        `${CLIENT_URL}/home-page?token=${token}&user=${encodeURIComponent(
+        `${CLIENT_URL}/auth/middle-page?token=${token}&user=${encodeURIComponent(
             JSON.stringify(user)
         )}`
     );
