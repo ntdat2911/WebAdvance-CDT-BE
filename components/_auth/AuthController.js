@@ -25,13 +25,16 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     const user = await authorizeService.getUserByEmail(req.body.email);
-    console.log(user + " User");
+
     if (!user) {
         res.json("No user found");
     } else {
         if (user[0].verified == 0) {
             res.json("Email is not verified");
-        } else {
+        } else if(user[0].active == "0"){
+            res.json("Your account has been banned")
+        }
+        else {
             const validPassword = await bcrypt.compare(
                 req.body.password,
                 user[0].password

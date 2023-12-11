@@ -28,11 +28,22 @@ exports.getClasses = async (req, res) => {
   }
 };
 
-exports.update = async (req, res) => {
+exports.updateUsers = async (req, res) => {
   try {
     console.log(req.body);
-    const { id, name, email, avatar } = req.body;
+    const { email } = req.body;
     userService.updateUser(id, name, email, avatar);
+    res.status(200).json("Success");
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.banUsers = async (req, res) => {
+  try {
+    const { email, active, sociallogin } = req.body.user;
+    console.log(email);
+    userService.banUser(email, active, sociallogin);
     res.status(200).json("Success");
   } catch (error) {
     res.status(500).json(error);

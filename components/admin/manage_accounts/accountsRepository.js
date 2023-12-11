@@ -17,3 +17,11 @@ exports.updateUser = async (name, email, image, id) => {
   console.log(result[0]);
   return result[0];
 };
+
+exports.banUser = async (email, active, sociallogin) => {
+  const result = await db.connection.execute(
+    "update accounts set email=?,active=?, sociallogin=? where email=?",
+    [email, active, sociallogin, email]
+  );
+  return result[0];
+};
