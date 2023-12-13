@@ -6,7 +6,7 @@ const middlewareToken = require('../../middleware/auth');
 router.get('/getStudents',  manageController.getStudents);
 router.get('/getTeachers',  manageController.getTeachers);
 router.get('/getClasses',  manageController.getClasses);
-router.get('/updateUsers',  manageController.updateUsers);
+router.post('/updateUsers',  manageController.updateUsers);
 router.post('/banUsers',  manageController.banUsers);
 
 

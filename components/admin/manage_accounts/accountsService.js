@@ -1,11 +1,15 @@
 const userRepository = require("./accountsRepository");
 
-exports.getAllUsers = async ( role) => {
-  return await userRepository.getAllUsers(role);
+exports.getAllUsers = async () => {
+  return await userRepository.getAllUsers("user");
 };
 
-exports.updateUser = async (id, name, email, avatar) => {
-  return await userRepository.updateUser(name, email, avatar, id);
+exports.getAllClasses = async () => {
+  return await userRepository.getAllClasses();
+};
+
+exports.updateUser = async (id, name, birthday) => {
+  return await userRepository.updateUser(id, name, birthday);
 };
 
 exports.banUser = async (email, active, social) => {
