@@ -15,3 +15,20 @@ exports.updateUser = async (id, name, birthday) => {
 exports.banUser = async (email, active, social) => {
   return await userRepository.banUser(email, active, social);
 };
+
+exports.activeClass = async (id, value) => {
+  return await userRepository.activeClass(id, value);
+}; 
+
+exports.getStudentIds = async () => {
+  return await userRepository.getStudentIds();
+};
+
+exports.mapStudentId = async (id, studentId) => {
+  return await userRepository.mapStudentId(id, studentId);
+};
+
+exports.mapListStudentId = async (data) => {
+  return await userRepository.mapListStudentId(data);
+};
+

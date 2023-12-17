@@ -1,7 +1,7 @@
 const db = require('../../db/index');
 
 exports.getUserByEmail = async(email) => {
-    const result = await db.connection.execute("select * from accounts where email like ? limit 1", [email]);
+    const result = await db.connection.execute("select * from accounts where email like ? and sociallogin = ? limit 1", [email, "0"]);
     return result[0].length > 0 ? result[0] : null;
 }
 
@@ -11,7 +11,7 @@ exports.phonenumberExists = async(phonenumber) => {
 }
 
 exports.emailExists = async(email) => {
-    const result = await db.connection.execute('select email from accounts where email = ? limit 1', [email]);
+    const result = await db.connection.execute('select email from accounts where email = ? and sociallogin = ? limit 1', [email, "0"]);
     return result[0].length > 0;
 }
 

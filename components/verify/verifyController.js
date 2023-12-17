@@ -5,11 +5,13 @@ const jwt = require("jsonwebtoken");
 const CLIENT_URL = process.env.CLIENT_HOST || "http://localhost:3000/";
 const SERVER_URL = process.env.SERVER_HOST || "http://localhost:5000/";
 
+require("dotenv").config();
+
 const smtpTransport = nodemailer.createTransport({
   service: "Gmail",
   auth: {
     user: "ktphanmem20@gmail.com",
-    pass: "ohdj zunf edoj ojum",
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 

@@ -29,7 +29,6 @@ exports.getClasses = async (req, res) => {
 
 exports.updateUsers = async (req, res) => {
   try {
-    console.log(req.body);
     const { id, fullname, birthday } = req.body;
     userService.updateUser(id, fullname, birthday);
     res.status(200).json("Success");
@@ -41,8 +40,55 @@ exports.updateUsers = async (req, res) => {
 exports.banUsers = async (req, res) => {
   try {
     const { email, active, sociallogin } = req.body.user;
-    console.log(email);
     userService.banUser(email, active, sociallogin);
+    res.status(200).json("Success");
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.activeClasses = async (req, res) => {
+  try {
+    const { id, active } = req.body.data;
+    console.log(id);
+    userService.activeClass(id, active);
+    res.status(200).json("Success");
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.getStudentIds = async (req, res) => {
+  try {
+    const result = await userService.getStudentIds();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.mapStudentId = async (req, res) => {
+  try {
+    const {id, userId} = req.body;
+    console.log(id);
+    const result = await userService.mapStudentId(id, userId);
+    console.log(result);
+    res.status(200).json("Success");
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.mapListStudentId = async (req, res) => {
+  try {
+    const {data} = req.body;
+    const validUsers = data.filter(user => user.iduser !== undefined);
+
+    if (validUsers.length === 0) {
+      res.status(200).json("Success");
+    }
+    console.log(validUsers)
+    const result = await userService.mapListStudentId(validUsers);
     res.status(200).json("Success");
   } catch (error) {
     res.status(500).json(error);

@@ -7,7 +7,6 @@ exports.verifyAccount = async (email)=>{
 
 exports.resetPassword = async (email)=>{
     const result = await verifyRepository.resetPassword(email);
-    console.log(result);
     if(result[0].length < 1)
         return false;
     else return true;
