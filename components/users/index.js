@@ -6,9 +6,11 @@ const middlewareToken = require("../../middleware/auth");
 
 router.get(
   "/getUser/:id",
-  middlewareToken.verifyToken,
   userController.getOneUser
 );
-router.post("/update", middlewareToken.verifyToken, userController.update);
+router.post("/update", userController.update);
+
+//get List studentId
+router.get("/getStudentIds", userController.getStudentIds);
 
 module.exports = router;

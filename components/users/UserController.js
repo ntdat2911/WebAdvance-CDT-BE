@@ -22,3 +22,12 @@ exports.update = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+exports.getStudentIds = async (req, res) => {
+  try {
+    const result = await userService.getStudentIds();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};

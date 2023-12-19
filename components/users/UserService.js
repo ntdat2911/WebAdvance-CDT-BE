@@ -7,3 +7,7 @@ exports.getUser = async (id) => {
 exports.updateUser = async (id, name, email, avatar) => {
   return await userRepository.updateUser(name, email, avatar, id);
 };
+
+exports.getStudentIds = async () => {
+  return await userRepository.getStudentIds();
+};

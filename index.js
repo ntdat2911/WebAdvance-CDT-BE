@@ -44,7 +44,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/auth", authRoutes);
-app.use("/", userRoutes);
+app.use("/", middleware.verifyToken, userRoutes);
 app.use("/auth", verifyRoutes);
 app.use("/admin", middleware.verifyToken, adminRoutes);
 app.use("/class", classRoutes);

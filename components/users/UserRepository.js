@@ -16,3 +16,11 @@ exports.updateUser = async (name, email, image, id) => {
   console.log(result[0]);
   return result[0];
 };
+
+exports.getStudentIds = async () => {
+  const result = await db.connection.execute(
+    "select id, idstudent from studentId where iduser = ?", [""]
+  );
+
+  return result[0].length > 0 ? result[0] : null;
+};
