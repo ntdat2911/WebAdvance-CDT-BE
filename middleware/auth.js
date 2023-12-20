@@ -13,12 +13,13 @@ exports.verifyToken = (req, res, next) => {
           res.status(401).json("Token is not valid");
         } else {
           const userRole = decoded.role;
-          console.log(userRole)
+          // console.log(userRole);
           if (userRole == "admin") {
             console.log("Vao duoc admin");
             next();
           } else if (
-            userRole == "user" //&&req.baseUrl.startsWith("/")
+            userRole == "user" ||
+            userRole == "student" //&&req.baseUrl.startsWith("/")
           ) {
             console.log("Vao duoc user");
             next();
