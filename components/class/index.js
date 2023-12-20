@@ -5,6 +5,9 @@ const classController = require("./ClassController");
 const enrollmentController = require("./user_class/EnrollmentController");
 
 router.get("/getAClass/:id", classController.getAClass);
+router.post("/getStudentClasses", classController.getStudentClass);
+router.post("/getTeacherClasses", classController.getTeacherClass);
+
 router.post("/insertClass", classController.insertAClass);
 router.post("/updateClass", classController.updateAClass);
 

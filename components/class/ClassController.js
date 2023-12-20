@@ -39,3 +39,23 @@ exports.updateAClass = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+exports.getStudentClass = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const user = await classService.getStudentClass(id);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.getTeacherClass = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const user = await classService.getTeacherClass(id);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};

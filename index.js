@@ -47,7 +47,7 @@ app.use("/auth", authRoutes);
 app.use("/", middleware.verifyToken, userRoutes);
 app.use("/auth", verifyRoutes);
 app.use("/admin", middleware.verifyToken, adminRoutes);
-app.use("/class", classRoutes);
+app.use("/class", middleware.verifyToken,classRoutes);
 
 app.listen(PORT, () => console.log(`Server running at ${PORT}`));
 

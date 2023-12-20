@@ -32,3 +32,11 @@ exports.updateAClass = async (id, className) => {
     room
   );
 };
+
+exports.getStudentClass = async (id) => {
+  return await classRepository.getStudentClass(id);
+};
+
+exports.getTeacherClass = async (id) => {
+  return await classRepository.getTeacherClass(id);
+};

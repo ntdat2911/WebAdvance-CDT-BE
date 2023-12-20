@@ -37,3 +37,24 @@ exports.updateAClass = async (
   );
   return result[0];
 };
+
+exports.getStudentClass = async (id) => {
+  const result = await db.connection.execute(
+    "SELECT enrollment.*, class.* FROM enrollment INNER JOIN class ON enrollment.classId = class.id WHERE enrollment.userId = ? AND enrollment.role = ?",
+      [id, "student"]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+
+exports.getTeacherClass = async (id) => {
+  try {
+    const result = await db.connection.execute(
+      "SELECT enrollment.*, class.* FROM enrollment INNER JOIN class ON enrollment.classId = class.id WHERE enrollment.userId = ? AND enrollment.role = ?",
+      [id, "teacher"]
+    );
+    return result[0].length > 0 ? result[0] : null;
+  } catch (error) {
+    console.log(error)
+  }
+  
+};
