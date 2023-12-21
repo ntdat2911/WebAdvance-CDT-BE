@@ -69,7 +69,7 @@ exports.getStudentIds = async (req, res) => {
 
 exports.mapStudentId = async (req, res) => {
   try {
-    const {id, userId} = req.body;
+    const { id, userId } = req.body;
     console.log(id);
     const result = await userService.mapStudentId(id, userId);
     console.log(result);
@@ -81,13 +81,19 @@ exports.mapStudentId = async (req, res) => {
 
 exports.mapListStudentId = async (req, res) => {
   try {
-    const {data} = req.body;
-    const validUsers = data.filter(user => user.iduser !== undefined);
+    const { data } = req.body;
+
+    const validUsers = data.map(item => {
+      if (item.iduser === undefined) {
+        item.iduser = null;
+      }
+      return item;
+    });
 
     if (validUsers.length === 0) {
       res.status(200).json("Success");
     }
-    console.log(validUsers)
+
     const result = await userService.mapListStudentId(validUsers);
     res.status(200).json("Success");
   } catch (error) {

@@ -9,14 +9,24 @@ const userRoutes = require("./components/users");
 const verifyRoutes = require("./components/verify");
 const adminRoutes = require("./components/admin");
 const classRoutes = require("./components/class");
+const { Server } = require("socket.io");
+// const { createAdapter } = require("@socket.io/redis-adapter");
+// const { createClient } = require("redis");
 
 const middleware = require("./middleware/auth");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const CLIENT_HOST = process.env.CLIENT_HOST || "http://localhost:3000";
-
+const onlineUsers = []
 require("dotenv").config();
+
+// const pubClient = createClient({ host: "localhost", port: 6379 });
+// const subClient = pubClient.duplicate();
+
+const io = new Server({
+  cors: CLIENT_HOST
+});
 
 app.use(express.json());
 app.use(express.urlencoded());
@@ -35,10 +45,45 @@ app.get("/", (req, res) => {
 });
 
 app.use(session({
-    secret: 'very secret keyboard cat',
-    resave: false,
-    saveUninitialized: false,
+  secret: 'very secret keyboard cat',
+  resave: false,
+  saveUninitialized: false,
 }));
+
+const addNewUser = (userId, socketId) => {
+  !onlineUsers.some((user) => user.userId === userId) &&
+    onlineUsers.push({ userId, socketId });
+};
+
+const removeUser = (socketId) => {
+  onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
+};
+
+const getUser = (userId) => {
+  return onlineUsers.find((user) => user.userId === userId);
+};
+
+io.on("connection", (socket) => {
+  console.log("New connection ", socket.id);
+
+  socket.on("newUser", (userId) => {
+    addNewUser(userId, socket.id);
+  })
+
+  socket.on("sendNotification", ({ senderId, receiverId, type }) => {
+    const receiver = getUser(receiverId);
+    io.to(receiver.socketId).emit("getNotification", {
+      senderId,
+      type,
+    });
+
+    socket.on("disconnect", () => {
+      removeUser(socket.id);
+    });
+  });
+
+  console.log("Online users: ", onlineUsers);
+});
 
 //app.use(passport.authenticate('session'));
 app.use(passport.initialize());
@@ -47,8 +92,8 @@ app.use("/auth", authRoutes);
 app.use("/", middleware.verifyToken, userRoutes);
 app.use("/auth", verifyRoutes);
 app.use("/admin", middleware.verifyToken, adminRoutes);
-app.use("/class", middleware.verifyToken,classRoutes);
-
+app.use("/class", middleware.verifyToken, classRoutes);
+io.listen(3500);
 app.listen(PORT, () => console.log(`Server running at ${PORT}`));
 
 module.exports = app;
