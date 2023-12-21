@@ -22,9 +22,16 @@ exports.insertAClass = async (
   );
 };
 
-exports.updateAClass = async (id, className) => {
+exports.updateAClass = async (
+  classId,
+  className,
+  description,
+  title,
+  topic,
+  room
+) => {
   return await classRepository.updateAClass(
-    id,
+    classId,
     className,
     description,
     title,
@@ -39,4 +46,8 @@ exports.getStudentClass = async (id) => {
 
 exports.getTeacherClass = async (id) => {
   return await classRepository.getTeacherClass(id);
+};
+
+exports.updateActive = async (id, status) => {
+  return await classRepository.updateActive(id, status);
 };

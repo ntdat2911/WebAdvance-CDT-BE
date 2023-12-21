@@ -32,8 +32,16 @@ exports.insertAClass = async (req, res) => {
 
 exports.updateAClass = async (req, res) => {
   try {
-    const { id, className, description, title, topic, room } = req.body;
-    classService.updateAClass(id, className, description, title, topic, room);
+    const { classId, className, description, title, topic, room } = req.body;
+    console.log(classId, className, description, title, topic, room);
+    const respone = await classService.updateAClass(
+      classId,
+      className,
+      description,
+      title,
+      topic,
+      room
+    );
     res.status(200).json("Success");
   } catch (error) {
     res.status(500).json(error);
