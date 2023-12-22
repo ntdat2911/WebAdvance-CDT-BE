@@ -13,4 +13,8 @@ router.post("/updateClass", classController.updateAClass);
 
 router.post("/insertEnrollment", enrollmentController.insertEnrollment);
 
+
+//teacher
+router.get("/getGrades/:id", classController.getGrades);
+router.get("/getGradeStructures/:id", classController.getGradeStructures);
 module.exports = router;

@@ -65,3 +65,20 @@ exports.getTeacherClass = async (id) => {
     console.log(error);
   }
 };
+
+exports.getGrades = async (idClass) => {
+  const result = await db.connection.execute(
+    "SELECT grade.*, accounts.fullname FROM grade JOIN accounts ON grade.idUser = accounts.id WHERE grade.idClass = ?",
+    [idClass]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+
+exports.getGradeStructures = async (id) => {
+  const result = await db.connection.execute(
+    "SELECT * from gradeStructure where id = ?",
+    [id]
+  );
+  console.log(result)
+  return result[0].length > 0 ? result[0] : null;
+};

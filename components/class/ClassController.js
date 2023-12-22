@@ -67,3 +67,24 @@ exports.getTeacherClass = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+exports.getGrades = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+    const user = await classService.getGrades(id);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.getGradeStructures = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await classService.getGradeStructures(id);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
