@@ -16,5 +16,13 @@ router.post("/insertEnrollment", enrollmentController.insertEnrollment);
 
 //teacher
 router.get("/getGrades/:id", classController.getGrades);
+router.post("/updateGrade", classController.updateGrade);
+router.post("/updateGrades", classController.updateGrades);  //update by FILE CSV
 router.get("/getGradeStructures/:id", classController.getGradeStructures);
+router.post("/addGradeStructure", classController.addGradeStructure);
+router.post("/updateRowGradeStructures", classController.updateRowGradeStructures);
+router.post("/updateGradeStructure", classController.updateGradeStructure);
+router.post("/finalGradeStructure", classController.finalGradeStructure);
+router.post("/deleteGradeStructure", classController.deleteGradeStructure);
+
 module.exports = router;
