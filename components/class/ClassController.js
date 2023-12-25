@@ -141,8 +141,9 @@ exports.updateGrades = async (req, res) => {
 exports.getGradeStructures = async (req, res) => {
   try {
     const { id } = req.params;
-
+    console.log(id)
     const user = await classService.getGradeStructures(id);
+    console.log(JSON.stringify(user))
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
@@ -201,6 +202,27 @@ exports.deleteGradeStructure = async (req, res) => {
 
     const students = await classService.getAllStudents(idClass);
     const user = await classService.deleteGradeStructure(idClass, gradeStructure, id, students, deletedValue);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+
+exports.getGradesStudent = async (req, res) => {
+  try {
+    const { idClass, idUser } = req.body;
+    const user = await classService.getGradesStudent(idClass, idUser);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.getGradeStructuresStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await classService.getGradeStructuresStudent(id);
     res.json(user);
   } catch (error) {
     res.status(500).json(error);

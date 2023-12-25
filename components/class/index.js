@@ -25,4 +25,9 @@ router.post("/updateGradeStructure", classController.updateGradeStructure);
 router.post("/finalGradeStructure", classController.finalGradeStructure);
 router.post("/deleteGradeStructure", classController.deleteGradeStructure);
 
+//student
+router.post("/student/getGrades", classController.getGradesStudent);
+router.get("/student/getGradeStructures/:id", classController.getGradeStructuresStudent);
+router.post("/updateGrade", classController.updateGrade);
+
 module.exports = router;

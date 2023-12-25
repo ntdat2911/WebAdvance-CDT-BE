@@ -4,10 +4,10 @@ const db = { connection: null };
 
 (async () => {
   db.connection = await mysql.createConnection({
-    host: "mysql-157832-0.cloudclusters.net",
-    port: 19915,
+    host: "mysql-158954-0.cloudclusters.net",
+    port: 10026,
     user: "admin",
-    password: "XEA5DvMK",
+    password: "1JjcGXfi",
     database: "advanceweb",
     multipleStatements: true
   });

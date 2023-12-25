@@ -221,3 +221,19 @@ exports.deleteGradeStructure = async (idClass, id, students, deletedValue) => {
   
   return result[0].length > 0 ? result[0] : null;
 };
+
+exports.getGradesStudent = async (idClass, idUser) => {
+  const result = await db.connection.execute(
+    "SELECT enrollment.userId, enrollment.classId, accounts.fullname, gradeStructure.percentage, grade.score FROM enrollment JOIN accounts ON enrollment.userId = accounts.id JOIN gradeStructure ON enrollment.classId = gradeStructure.idClass LEFT JOIN grade ON enrollment.userId = grade.idUser AND enrollment.classId = grade.idClass AND grade.type = gradeStructure.percentage WHERE enrollment.classId = ? AND enrollment.role = 'student' AND enrollment.userId=?",
+    [idClass, idUser]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+
+exports.getGradeStructuresStudent = async (id) => {
+  const result = await db.connection.execute(
+    "SELECT * from gradeStructure where idClass = ? and finalScore=1",
+    [id]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
