@@ -188,8 +188,9 @@ exports.updateGradeStructure = async (req, res) => {
 exports.finalGradeStructure = async (req, res) => {
   try {
     const { idClass, gradeStructure } = req.body;
-
-    const user = await classService.finalGradeStructure(idClass, gradeStructure);
+    const content = "You have new score";
+    const idUser = await classService.getAllStudents(idClass);
+    const user = await classService.finalGradeStructure(idClass, idUser, content, gradeStructure);
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
@@ -223,6 +224,16 @@ exports.getGradeStructuresStudent = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await classService.getGradeStructuresStudent(id);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.getNotifications = async (req, res) => {
+  try {
+    const { idUser } = req.body;
+    const user = await classService.getNotifications(idUser);
     res.json(user);
   } catch (error) {
     res.status(500).json(error);

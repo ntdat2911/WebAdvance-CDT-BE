@@ -30,4 +30,6 @@ router.post("/student/getGrades", classController.getGradesStudent);
 router.get("/student/getGradeStructures/:id", classController.getGradeStructuresStudent);
 router.post("/updateGrade", classController.updateGrade);
 
+//notificaiton
+router.post("/getNotifications", classController.getNotifications);
 module.exports = router;

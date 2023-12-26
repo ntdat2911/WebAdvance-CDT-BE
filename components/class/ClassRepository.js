@@ -1,4 +1,5 @@
 const db = require("../../db/index");
+const moment = require('moment-timezone');
 
 exports.getAClass = async (id) => {
   const result = await db.connection.execute(
@@ -236,4 +237,31 @@ exports.getGradeStructuresStudent = async (id) => {
     [id]
   );
   return result[0].length > 0 ? result[0] : null;
+};
+
+exports.addNotification = async (idClass, idUser, content) => {
+  const result = await db.connection.execute(
+    "INSERT INTO notifications (idClass,idUser, content) VALUES (?,?,?)",
+    [idClass, idUser, content]
+  );
+}
+
+exports.getNotifications = async (id) => {
+  const result = await db.connection.execute(
+    "SELECT * FROM notifications WHERE idUser = ? ORDER BY createdDay DESC LIMIT 5",
+    [id]
+  );
+  console.log(result)
+
+  const notifications = result[0].map(notification => {
+    console.log(notification.createdDay)
+    const localizedTimestamp = moment(notification.createdDay).tz('Asia/Ho_Chi_Minh');
+    console.log(localizedTimestamp)
+    return {
+      ...notification,
+      createdDay: localizedTimestamp.format(),
+    };
+  });
+
+  return notifications.length > 0 ? notifications : null;
 };

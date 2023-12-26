@@ -23,9 +23,9 @@ require("dotenv").config();
 
 // const pubClient = createClient({ host: "localhost", port: 6379 });
 // const subClient = pubClient.duplicate();
-
+console.log(CLIENT_HOST)
 const io = new Server({
-  cors: CLIENT_HOST
+  cors: "http://localhost:3000"
 });
 
 app.use(express.json());
@@ -68,10 +68,12 @@ io.on("connection", (socket) => {
 
   socket.on("newUser", (userId) => {
     addNewUser(userId, socket.id);
+    console.log("Online users: ", onlineUsers);
   })
 
   socket.on("sendNotification", ({ senderId, receiverId, type }) => {
     const receiver = getUser(receiverId);
+    console.log(type)
     io.to(receiver.socketId).emit("getNotification", {
       senderId,
       type,
@@ -82,7 +84,7 @@ io.on("connection", (socket) => {
     });
   });
 
-  console.log("Online users: ", onlineUsers);
+ 
 });
 
 //app.use(passport.authenticate('session'));

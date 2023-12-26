@@ -159,8 +159,9 @@ exports.updateGradeStructure = async (idClass, gradeStructure) => {
   return result;
 };
 
-exports.finalGradeStructure = async (idClass, gradeStructure) => {
+exports.finalGradeStructure = async (idClass, idUser, content, gradeStructure) => {
   const result = await classRepository.finalGradeStructure(idClass, gradeStructure);
+  await classRepository.addNotification(idClass, idUser, content);
   return result;
 };
 
@@ -239,4 +240,8 @@ exports.getGradesStudent = async (id, idUser) => {
 
 exports.getGradeStructuresStudent = async (id) => {
   return await classRepository.getGradeStructuresStudent(id);
+};
+
+exports.getNotifications = async (id) => {
+  return await classRepository.getNotifications(id);
 };
