@@ -5,6 +5,7 @@ const classController = require("./ClassController");
 const enrollmentController = require("./user_class/EnrollmentController");
 
 router.get("/getAClass/:id", classController.getAClass);
+router.get("/getListStudentIds/:id", classController.getListStudentIds);
 router.post("/getStudentClasses", classController.getStudentClass);
 router.post("/getTeacherClasses", classController.getTeacherClass);
 
@@ -32,4 +33,5 @@ router.post("/updateGrade", classController.updateGrade);
 
 //notificaiton
 router.post("/getNotifications", classController.getNotifications);
+router.post("/setReadNotifications", classController.setReadNotifications);
 module.exports = router;

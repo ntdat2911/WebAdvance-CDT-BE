@@ -4,6 +4,10 @@ exports.getAClass = async (id) => {
   return await classRepository.getAClass(id);
 };
 
+exports.getListStudentIds = async (id) => {
+  return await classRepository.getListStudentIds(id);
+};
+
 exports.insertAClass = async (
   className,
   createdBy,
@@ -159,9 +163,11 @@ exports.updateGradeStructure = async (idClass, gradeStructure) => {
   return result;
 };
 
-exports.finalGradeStructure = async (idClass, idUser, content, gradeStructure) => {
+exports.finalGradeStructure = async (idClass, idUser, content, url, gradeStructure) => {
   const result = await classRepository.finalGradeStructure(idClass, gradeStructure);
-  await classRepository.addNotification(idClass, idUser, content);
+
+  if(gradeStructure.finalScore == 1)
+    await classRepository.addClassNotification(idClass, idUser, content, url);
   return result;
 };
 
@@ -244,4 +250,8 @@ exports.getGradeStructuresStudent = async (id) => {
 
 exports.getNotifications = async (id) => {
   return await classRepository.getNotifications(id);
+};
+
+exports.setReadNotifications = async (notifications) => {
+  return await classRepository.setReadNotifications(notifications);
 };

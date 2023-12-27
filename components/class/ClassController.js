@@ -12,6 +12,18 @@ exports.getAClass = async (req, res) => {
   }
 };
 
+exports.getListStudentIds = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await classService.getListStudentIds(id);
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 exports.insertAClass = async (req, res) => {
   try {
     const { className, createdBy, description, title, topic, room } = req.body;
@@ -187,10 +199,10 @@ exports.updateGradeStructure = async (req, res) => {
 
 exports.finalGradeStructure = async (req, res) => {
   try {
-    const { idClass, gradeStructure } = req.body;
+    const { idClass, url, gradeStructure } = req.body;
     const content = "You have new score";
     const idUser = await classService.getAllStudents(idClass);
-    const user = await classService.finalGradeStructure(idClass, idUser, content, gradeStructure);
+    const user = await classService.finalGradeStructure(idClass, idUser, content, url, gradeStructure);
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
@@ -234,6 +246,16 @@ exports.getNotifications = async (req, res) => {
   try {
     const { idUser } = req.body;
     const user = await classService.getNotifications(idUser);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.setReadNotifications = async (req, res) => {
+  try {
+    const { notifications } = req.body;
+    const user = await classService.setReadNotifications(notifications);
     res.json(user);
   } catch (error) {
     res.status(500).json(error);

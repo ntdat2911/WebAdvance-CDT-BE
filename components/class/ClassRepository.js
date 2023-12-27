@@ -9,6 +9,15 @@ exports.getAClass = async (id) => {
   return result[0].length > 0 ? result[0] : null;
 };
 
+exports.getListStudentIds = async (id) => {
+  const result = await db.connection.execute(
+    "select * from enrollment where classId = ? and role='student'",
+    [id]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+
+
 exports.insertAClass = async (
   className,
   createdBy,
@@ -144,7 +153,7 @@ exports.addGradeStructure = async (idClass, percentage, value, orderValue, stude
   );
 
   try {
-    for(const stu of students){
+    for (const stu of students) {
       await db.connection.execute(
         "INSERT INTO grade (IDCLASS,type, idUser) VALUES (?,?,?)",
         [idClass, percentage, stu.userId]
@@ -153,7 +162,7 @@ exports.addGradeStructure = async (idClass, percentage, value, orderValue, stude
   } catch (error) {
     console.log(error)
   }
-  
+
   return result[0].length > 0 ? result[0] : null;
 };
 
@@ -163,7 +172,7 @@ exports.updateRowGradeStructures = async (idClass, gradeStructure) => {
       try {
         await db.connection.execute(
           'UPDATE gradeStructure SET orderValue=?,value = ? WHERE idClass = ? AND percentage = ?',
-          [id, value,  idClass, percentage]
+          [id, value, idClass, percentage]
         );
       }
       catch (error) {
@@ -181,7 +190,7 @@ exports.updateGradeStructure = async (idClass, gradeStructure) => {
   try {
     const result = await db.connection.execute(
       "UPDATE gradeStructure set percentage=?, value = ? WHERE idClass =? and orderValue = ?",
-      [gradeStructure.percentage,gradeStructure.value, idClass, gradeStructure.id]
+      [gradeStructure.percentage, gradeStructure.value, idClass, gradeStructure.id]
     );
     return result[0].length > 0 ? result[0] : null;
   }
@@ -210,7 +219,7 @@ exports.deleteGradeStructure = async (idClass, id, students, deletedValue) => {
   );
 
   try {
-    for(const stu of students){
+    for (const stu of students) {
       await db.connection.execute(
         "DELETE FROM grade where idClass=? and idUser=? and type=?",
         [idClass, stu.userId, deletedValue]
@@ -219,7 +228,7 @@ exports.deleteGradeStructure = async (idClass, id, students, deletedValue) => {
   } catch (error) {
     console.log(error)
   }
-  
+
   return result[0].length > 0 ? result[0] : null;
 };
 
@@ -239,24 +248,42 @@ exports.getGradeStructuresStudent = async (id) => {
   return result[0].length > 0 ? result[0] : null;
 };
 
-exports.addNotification = async (idClass, idUser, content) => {
-  const result = await db.connection.execute(
-    "INSERT INTO notifications (idClass,idUser, content) VALUES (?,?,?)",
-    [idClass, idUser, content]
-  );
+exports.addClassNotification = async (idClass, idUser, content, url) => {
+  for (const id of idUser) {
+    try {
+      await db.connection.execute(
+        "INSERT INTO notifications (sender,receiver, content, url, type) VALUES (?,?,?,?,?)",
+        [idClass, id.userId, content, url, "class"]
+      )
+    } catch (error) {
+      return false;
+    }
+  }
+  return true;
+}
+
+exports.addUserNotification = async (idClass, idUser, content, url) => {
+  for (const id of idUser) {
+    try {
+      await db.connection.execute(
+        "INSERT INTO notifications (sender,receiver, content, url, type) VALUES (?,?,?,?,?)",
+        [idClass, id.userId, content, url, "user"]
+      )
+    } catch (error) {
+      return false;
+    }
+  }
+  return true;
 }
 
 exports.getNotifications = async (id) => {
   const result = await db.connection.execute(
-    "SELECT * FROM notifications WHERE idUser = ? ORDER BY createdDay DESC LIMIT 5",
+    "SELECT notifications.*, accounts.fullname, class.name, CASE WHEN notifications.type = 'class' THEN class.id WHEN notifications.type = 'user' THEN accounts.id ELSE NULL END AS additionalId FROM notifications LEFT JOIN class ON notifications.type = 'class' AND class.id = notifications.sender LEFT JOIN accounts ON notifications.type = 'user' AND accounts.id = notifications.receiver WHERE notifications.receiver = ? ORDER BY notifications.createdDay DESC LIMIT 5",
     [id]
   );
-  console.log(result)
 
   const notifications = result[0].map(notification => {
-    console.log(notification.createdDay)
     const localizedTimestamp = moment(notification.createdDay).tz('Asia/Ho_Chi_Minh');
-    console.log(localizedTimestamp)
     return {
       ...notification,
       createdDay: localizedTimestamp.format(),
@@ -265,3 +292,18 @@ exports.getNotifications = async (id) => {
 
   return notifications.length > 0 ? notifications : null;
 };
+
+exports.setReadNotifications = async (notifications) => {
+  for (const noti of notifications) {
+    try {
+      await db.connection.execute(
+        "UPDATE notifications SET marked=1 where id=?",
+        [noti.id]
+      );
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+  return true;
+}
