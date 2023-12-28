@@ -23,6 +23,16 @@ exports.update = async (req, res) => {
   }
 };
 
+exports.setStudentId = async (req, res) => {
+  try {
+    const { id, idUser} = req.body;
+    userService.setStudentId(id, idUser);
+    res.status(200).json("Success");
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 exports.getStudentIds = async (req, res) => {
   try {
     const result = await userService.getStudentIds();

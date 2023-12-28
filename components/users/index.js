@@ -10,8 +10,10 @@ router.get(
 );
 router.post("/update", userController.update);
 
+router.post("/setStudentId", userController.setStudentId);
+
 //get List studentId
 router.get("/getStudentIds", userController.getStudentIds);
-router.get("/getStudentId", userController.getStudentId);
+router.get("/getStudentId/:id", userController.getStudentId);
 
 module.exports = router;

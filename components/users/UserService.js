@@ -8,6 +8,10 @@ exports.updateUser = async (id, name, email, avatar) => {
   return await userRepository.updateUser(name, email, avatar, id);
 };
 
+exports.setStudentId = async (id, idUser) => {
+  return await userRepository.setStudentId(id, idUser);
+};
+
 exports.getStudentIds = async () => {
   return await userRepository.getStudentIds();
 };

@@ -13,21 +13,28 @@ exports.updateUser = async (name, email, image, id) => {
     "update accounts set fullname=?,email=?,image=? where id=?",
     [name, email, image, id]
   );
-  console.log(result[0]);
+  return result[0];
+};
+
+exports.setStudentId = async (id, idUser) => {
+  const result = await db.connection.execute(
+    "update studentId set idUser=? where id=?",
+    [idUser, id]
+  );
   return result[0];
 };
 
 exports.getStudentIds = async () => {
   const result = await db.connection.execute(
-    "select id, idstudent from studentId where iduser = ?", [""]
+    "select id, idstudent from studentId where iduser is NUll"
   );
 
   return result[0].length > 0 ? result[0] : null;
 };
 
-exports.getStudentIds = async (id) => {
+exports.getStudentId = async (id) => {
   const result = await db.connection.execute(
-    "select id, idstudent from studentId where iduser = ?", [id]
+    "select idstudent from studentId where iduser = ?", [id]
   );
 
   return result[0].length > 0 ? result[0] : null;

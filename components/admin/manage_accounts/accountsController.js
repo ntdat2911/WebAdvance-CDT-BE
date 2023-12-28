@@ -70,9 +70,7 @@ exports.getStudentIds = async (req, res) => {
 exports.mapStudentId = async (req, res) => {
   try {
     const { id, userId } = req.body;
-    console.log(id);
     const result = await userService.mapStudentId(id, userId);
-    console.log(result);
     res.status(200).json("Success");
   } catch (error) {
     res.status(500).json(error);
