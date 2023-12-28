@@ -24,3 +24,12 @@ exports.getStudentIds = async () => {
 
   return result[0].length > 0 ? result[0] : null;
 };
+
+exports.getStudentIds = async (id) => {
+  const result = await db.connection.execute(
+    "select id, idstudent from studentId where iduser = ?", [id]
+  );
+
+  return result[0].length > 0 ? result[0] : null;
+};
+

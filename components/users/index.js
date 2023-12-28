@@ -12,5 +12,6 @@ router.post("/update", userController.update);
 
 //get List studentId
 router.get("/getStudentIds", userController.getStudentIds);
+router.get("/getStudentId", userController.getStudentId);
 
 module.exports = router;
