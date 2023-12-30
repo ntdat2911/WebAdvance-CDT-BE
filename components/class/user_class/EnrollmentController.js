@@ -27,8 +27,24 @@ exports.getEnrollmentByClassId = async (req, res) => {
 exports.insertEnrollment = async (req, res) => {
   try {
     const { userId, classId, role } = req.body;
-    enrollmentService.insertEnrollment(userId, classId, role);
+    await enrollmentService.insertEnrollment(userId, classId, role);
     res.status(200).json("Success");
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+// get role of user in a class
+exports.getRoleEnrollmentByUserIdAndClassId = async (req, res) => {
+  try {
+    const { userId, classId } = req.body;
+
+    const user = await enrollmentService.getRoleEnrollmentByUserIdAndClassId(
+      userId,
+      classId
+    );
+
+    res.json(user);
   } catch (error) {
     res.status(500).json(error);
   }

@@ -1,5 +1,5 @@
 const db = require("../../db/index");
-const moment = require('moment-timezone');
+const moment = require("moment-timezone");
 
 exports.getAClass = async (id) => {
   const result = await db.connection.execute(
@@ -17,18 +17,18 @@ exports.getListStudentIds = async (id) => {
   return result[0].length > 0 ? result[0] : null;
 };
 
-
 exports.insertAClass = async (
   className,
   createdBy,
   description,
   title,
   topic,
-  room
+  room,
+  code
 ) => {
   const result = await db.connection.execute(
-    "insert into class (name,createdBy,description,title,topic,room,active) values (?,?,?,?,?,?,1)",
-    [className, createdBy, description, title, topic, room]
+    "insert into class (name,createdBy,description,title,topic,room,active,inviteCode) values (?,?,?,?,?,?,1,?)",
+    [className, createdBy, description, title, topic, room, code]
   );
   return result[0].insertId;
 };
@@ -112,12 +112,11 @@ exports.updateGrade = async (data) => {
   for (const update of data) {
     try {
       await db.connection.execute(
-        'UPDATE grade SET score=? WHERE type = ? AND idUser = ?',
+        "UPDATE grade SET score=? WHERE type = ? AND idUser = ?",
         [update.score, update.type, update.id]
       );
-    }
-    catch (error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
   }
   return true;
@@ -127,12 +126,11 @@ exports.updateGrades = async (data) => {
   for (const update of data) {
     try {
       await db.connection.execute(
-        'UPDATE grade SET score=? WHERE type = ? AND idUser = ?',
+        "UPDATE grade SET score=? WHERE type = ? AND idUser = ?",
         [update.score, update.type, update.index]
       );
-    }
-    catch (error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
   }
   return true;
@@ -146,7 +144,13 @@ exports.getGradeStructures = async (id) => {
   return result[0].length > 0 ? result[0] : null;
 };
 
-exports.addGradeStructure = async (idClass, percentage, value, orderValue, students) => {
+exports.addGradeStructure = async (
+  idClass,
+  percentage,
+  value,
+  orderValue,
+  students
+) => {
   const result = await db.connection.execute(
     "INSERT INTO gradeStructure (IDCLASS,PERCENTAGE, VALUE, orderValue) VALUES (?,?,?,?)",
     [idClass, percentage, value, orderValue]
@@ -160,7 +164,7 @@ exports.addGradeStructure = async (idClass, percentage, value, orderValue, stude
       );
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 
   return result[0].length > 0 ? result[0] : null;
@@ -171,18 +175,17 @@ exports.updateRowGradeStructures = async (idClass, gradeStructure) => {
     for (const { percentage, value, id } of gradeStructure) {
       try {
         await db.connection.execute(
-          'UPDATE gradeStructure SET orderValue=?,value = ? WHERE idClass = ? AND percentage = ?',
+          "UPDATE gradeStructure SET orderValue=?,value = ? WHERE idClass = ? AND percentage = ?",
           [id, value, idClass, percentage]
         );
-      }
-      catch (error) {
-        console.log(error)
+      } catch (error) {
+        console.log(error);
       }
     }
     return true;
   } catch (error) {
-    console.error('Error updating grade structures:', error);
-    return { success: false, error: 'Error updating grade structures' };
+    console.error("Error updating grade structures:", error);
+    return { success: false, error: "Error updating grade structures" };
   }
 };
 
@@ -190,14 +193,18 @@ exports.updateGradeStructure = async (idClass, gradeStructure) => {
   try {
     const result = await db.connection.execute(
       "UPDATE gradeStructure set percentage=?, value = ? WHERE idClass =? and orderValue = ?",
-      [gradeStructure.percentage, gradeStructure.value, idClass, gradeStructure.id]
+      [
+        gradeStructure.percentage,
+        gradeStructure.value,
+        idClass,
+        gradeStructure.id,
+      ]
     );
     return result[0].length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error("Error updating grade structures:", error);
   }
-  catch (error) {
-    console.error('Error updating grade structures:', error);
-  }
-}
+};
 
 exports.finalGradeStructure = async (idClass, gradeStructure) => {
   try {
@@ -206,11 +213,10 @@ exports.finalGradeStructure = async (idClass, gradeStructure) => {
       [gradeStructure.finalScore, idClass, gradeStructure.id]
     );
     return result[0].length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error("Error updating grade structures:", error);
   }
-  catch (error) {
-    console.error('Error updating grade structures:', error);
-  }
-}
+};
 
 exports.deleteGradeStructure = async (idClass, id, students, deletedValue) => {
   const result = await db.connection.execute(
@@ -226,7 +232,7 @@ exports.deleteGradeStructure = async (idClass, id, students, deletedValue) => {
       );
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 
   return result[0].length > 0 ? result[0] : null;
@@ -254,13 +260,13 @@ exports.addClassNotification = async (idClass, idUser, content, url) => {
       await db.connection.execute(
         "INSERT INTO notifications (sender,receiver, content, url, type) VALUES (?,?,?,?,?)",
         [idClass, id.userId, content, url, "class"]
-      )
+      );
     } catch (error) {
       return false;
     }
   }
   return true;
-}
+};
 
 exports.addUserNotification = async (idClass, idUser, content, url) => {
   for (const id of idUser) {
@@ -268,13 +274,13 @@ exports.addUserNotification = async (idClass, idUser, content, url) => {
       await db.connection.execute(
         "INSERT INTO notifications (sender,receiver, content, url, type) VALUES (?,?,?,?,?)",
         [idClass, id.userId, content, url, "user"]
-      )
+      );
     } catch (error) {
       return false;
     }
   }
   return true;
-}
+};
 
 exports.getNotifications = async (id) => {
   const result = await db.connection.execute(
@@ -282,8 +288,10 @@ exports.getNotifications = async (id) => {
     [id]
   );
 
-  const notifications = result[0].map(notification => {
-    const localizedTimestamp = moment(notification.createdDay).tz('Asia/Ho_Chi_Minh');
+  const notifications = result[0].map((notification) => {
+    const localizedTimestamp = moment(notification.createdDay).tz(
+      "Asia/Ho_Chi_Minh"
+    );
     return {
       ...notification,
       createdDay: localizedTimestamp.format(),
@@ -301,9 +309,42 @@ exports.setReadNotifications = async (notifications) => {
         [noti.id]
       );
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-
   }
   return true;
-}
+};
+// get invite code
+exports.getInviteCode = async (id) => {
+  const result = await db.connection.execute(
+    "SELECT inviteCode FROM class WHERE id = ?",
+    [id]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+
+// update invite code
+exports.updateInviteCode = async (id, code) => {
+  const result = await db.connection.execute(
+    "UPDATE class SET inviteCode = ? WHERE id = ?",
+    [code, id]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+
+//check exist code invite
+exports.checkExistCode = async (code) => {
+  const result = await db.connection.execute(
+    "SELECT * FROM class WHERE inviteCode = ?",
+    [code]
+  );
+  return result[0].length > 0 ? true : false;
+};
+//get class infomation by code but except active
+exports.getClassByCode = async (code) => {
+  const result = await db.connection.execute(
+    "SELECT id,name,createdBy,title,topic,room,description FROM class WHERE inviteCode = ?",
+    [code]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};

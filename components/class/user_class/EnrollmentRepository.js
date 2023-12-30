@@ -23,3 +23,28 @@ exports.insertEnrollment = async (userId, classId, role) => {
   );
   return result[0];
 };
+//count number of students in a class by classId
+exports.countStudent = async (id) => {
+  const result = await db.connection.execute(
+    "select count(*) as count from enrollment where classId = ? and role = 'student'",
+    [id]
+  );
+  return result[0][0].count;
+};
+//count number of teachers in a class by classId
+exports.countTeacher = async (id) => {
+  const result = await db.connection.execute(
+    "select count(*) as count from enrollment where classId = ? and role = 'teacher'",
+    [id]
+  );
+  return result[0][0].count;
+};
+
+//get enrollment by userId and classId
+exports.getEnrollmentByUserIdAndClassId = async (userId, classId) => {
+  const result = await db.connection.execute(
+    "select role from enrollment where userId = ? and classId = ?",
+    [userId, classId]
+  );
+  return result[0].length > 0 ? result[0][0] : null;
+};

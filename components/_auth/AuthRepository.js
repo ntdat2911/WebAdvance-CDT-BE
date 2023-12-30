@@ -36,7 +36,7 @@ exports.isSocial = async (email) => {
 exports.insertUser = async (fullname, email, hash) => {
   const result = await db.connection.execute(
     "insert into accounts (PASSWORD,FULLNAME, EMAIL, IMAGE, SOCIALLOGIN, ROLE, ACTIVE, VERIFIED) VALUES (?,?,?,?,?,?,?,?)",
-    [hash, fullname, email, "default-user.png", "0", "student", 1, "0"]
+    [hash, fullname, email, "default-user.png", "0", "user", 1, "0"]
   );
   return result[0];
 };
@@ -44,7 +44,7 @@ exports.insertUser = async (fullname, email, hash) => {
 exports.insertUserSocial = async (fullname, email, hash) => {
   const result = await db.connection.execute(
     "insert into accounts (PASSWORD,FULLNAME, EMAIL, IMAGE, SOCIALLOGIN, ROLE, ACTIVE, VERIFIED) VALUES (?,?,?,?,?,?,?,?)",
-    [hash, fullname, email, "default-user.png", "1", "student", 1, "0"]
+    [hash, fullname, email, "default-user.png", "1", "user", 1, "0"]
   );
   return result[0];
 };

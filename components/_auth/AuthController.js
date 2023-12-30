@@ -100,7 +100,7 @@ exports.callbackGoogle = async (req, res) => {
   const user = await authorizeService.getUserByEmail(email);
   const sendUser = { id: user[0].id, email: email, fullname: displayName };
   const token = jwt.sign(
-    { email: email, role: "student" },
+    { email: email, role: "user" },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: "2h" }
   );
@@ -126,7 +126,7 @@ exports.callbackFacebook = async (req, res) => {
   }
 
   const token = jwt.sign(
-    { fullname: user.fullname, role: "student" },
+    { fullname: user.fullname, role: "user" },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: "2h" }
   );

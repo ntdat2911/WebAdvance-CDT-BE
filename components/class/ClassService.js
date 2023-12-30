@@ -1,5 +1,7 @@
 const classRepository = require("./ClassRepository");
-
+const ShortUniqueId = require("short-unique-id");
+const enrollmentService = require("./user_class/EnrollmentService");
+const userService = require("../users/UserService");
 exports.getAClass = async (id) => {
   return await classRepository.getAClass(id);
 };
@@ -16,13 +18,16 @@ exports.insertAClass = async (
   topic,
   room
 ) => {
+  const { randomUUID } = new ShortUniqueId({ length: 10 });
+  const code = randomUUID();
   return await classRepository.insertAClass(
     className,
     createdBy,
     description,
     title,
     topic,
-    room
+    room,
+    code
   );
 };
 
@@ -68,21 +73,24 @@ exports.getGrades = async (id) => {
     tmp.forEach((item, id) => {
       item.id = id + 1;
     });
-    const final = tmp.map(obj => {
+    const final = tmp.map((obj) => {
       let { id, ...rest } = obj;
       return { id, ...rest };
     });
 
-    return final
+    return final;
   }
   const result = await classRepository.getGrades(id);
   const result2 = await classRepository.getGradeStructures(id);
 
-  const array = result2.map(item => ({ id: item.orderValue, percentage: item.percentage }));
+  const array = result2.map((item) => ({
+    id: item.orderValue,
+    percentage: item.percentage,
+  }));
   array.sort((a, b) => a.id - b.id);
-  const structure = array.map(item => item.percentage);
+  const structure = array.map((item) => item.percentage);
   const groupedData = {};
-  result.forEach(item => {
+  result.forEach((item) => {
     const userId = item.userId;
 
     if (!groupedData[userId]) {
@@ -104,7 +112,7 @@ exports.getGrades = async (id) => {
     item.id = id + 1;
   });
   //transfer to head
-  const final = finalResult.map(obj => {
+  const final = finalResult.map((obj) => {
     let { id, ...rest } = obj;
     return { id, ...rest };
   });
@@ -112,7 +120,7 @@ exports.getGrades = async (id) => {
 
   const reorderColumns = (obj, order) => {
     const orderedObj = { id: obj.id, fullname: obj.fullname, index: obj.index };
-    order.forEach(key => {
+    order.forEach((key) => {
       if (obj.hasOwnProperty(key)) {
         orderedObj[key] = obj[key];
       }
@@ -122,7 +130,7 @@ exports.getGrades = async (id) => {
   };
 
   // Reorder columns for each object in the array
-  const newData = tmp.map(item => reorderColumns(item, structure));
+  const newData = tmp.map((item) => reorderColumns(item, structure));
 
   return newData;
 };
@@ -130,49 +138,92 @@ exports.getGrades = async (id) => {
 exports.updateGrade = async (data) => {
   const result = await classRepository.updateGrade(data);
   return result;
-}
+};
 
 exports.updateGrades = async (data) => {
   const result = await classRepository.updateGrades(data);
   return result;
-}
+};
 
 exports.getGradeStructures = async (id) => {
   const result = await classRepository.getGradeStructures(id);
 
   if (result === null) {
-    return []
+    return [];
   }
-  const array = result.map(item => ({ id: item.orderValue, percentage: item.percentage, value: item.value, finalScore: item.finalScore }));
+  const array = result.map((item) => ({
+    id: item.orderValue,
+    percentage: item.percentage,
+    value: item.value,
+    finalScore: item.finalScore,
+  }));
   array.sort((a, b) => a.id - b.id);
   return array;
 };
 
-exports.addGradeStructure = async (idClass, percentage, value, orderValue, students) => {
-  const result = await classRepository.addGradeStructure(idClass, percentage, value, orderValue, students);
+exports.addGradeStructure = async (
+  idClass,
+  percentage,
+  value,
+  orderValue,
+  students
+) => {
+  const result = await classRepository.addGradeStructure(
+    idClass,
+    percentage,
+    value,
+    orderValue,
+    students
+  );
   return result;
 };
 
 exports.updateRowGradeStructures = async (idClass, gradeStructure) => {
-  const result = await classRepository.updateRowGradeStructures(idClass, gradeStructure);
+  const result = await classRepository.updateRowGradeStructures(
+    idClass,
+    gradeStructure
+  );
   return result;
 };
 
 exports.updateGradeStructure = async (idClass, gradeStructure) => {
-  const result = await classRepository.updateGradeStructure(idClass, gradeStructure);
+  const result = await classRepository.updateGradeStructure(
+    idClass,
+    gradeStructure
+  );
   return result;
 };
 
-exports.finalGradeStructure = async (idClass, idUser, content, url, gradeStructure) => {
-  const result = await classRepository.finalGradeStructure(idClass, gradeStructure);
+exports.finalGradeStructure = async (
+  idClass,
+  idUser,
+  content,
+  url,
+  gradeStructure
+) => {
+  const result = await classRepository.finalGradeStructure(
+    idClass,
+    gradeStructure
+  );
 
-  if(gradeStructure.finalScore == 1)
+  if (gradeStructure.finalScore == 1)
     await classRepository.addClassNotification(idClass, idUser, content, url);
   return result;
 };
 
-exports.deleteGradeStructure = async (idClass, gradeStructure, id, students, deletedValue) => {
-  const result = await classRepository.deleteGradeStructure(idClass, id, students, deletedValue);
+exports.deleteGradeStructure = async (
+  idClass,
+  gradeStructure,
+  id,
+  students,
+  deletedValue
+) => {
+  const result = await classRepository.deleteGradeStructure(
+    idClass,
+    id,
+    students,
+    deletedValue
+  );
   await classRepository.updateRowGradeStructures(idClass, gradeStructure);
   return result;
 };
@@ -185,21 +236,24 @@ exports.getGradesStudent = async (id, idUser) => {
     tmp.forEach((item, id) => {
       item.id = id + 1;
     });
-    const final = tmp.map(obj => {
+    const final = tmp.map((obj) => {
       let { id, ...rest } = obj;
       return { id, ...rest };
     });
 
-    return final
+    return final;
   }
   const result = await classRepository.getGradesStudent(id, idUser);
   const result2 = await classRepository.getGradeStructuresStudent(id);
 
-  const array = result2.map(item => ({ id: item.orderValue, percentage: item.percentage }));
+  const array = result2.map((item) => ({
+    id: item.orderValue,
+    percentage: item.percentage,
+  }));
   array.sort((a, b) => a.id - b.id);
-  const structure = array.map(item => item.percentage);
+  const structure = array.map((item) => item.percentage);
   const groupedData = {};
-  result.forEach(item => {
+  result.forEach((item) => {
     const userId = item.userId;
 
     if (!groupedData[userId]) {
@@ -221,7 +275,7 @@ exports.getGradesStudent = async (id, idUser) => {
     item.id = id + 1;
   });
   //transfer to head
-  const final = finalResult.map(obj => {
+  const final = finalResult.map((obj) => {
     let { id, ...rest } = obj;
     return { id, ...rest };
   });
@@ -229,7 +283,7 @@ exports.getGradesStudent = async (id, idUser) => {
 
   const reorderColumns = (obj, order) => {
     const orderedObj = { id: obj.id, fullname: obj.fullname, index: obj.index };
-    order.forEach(key => {
+    order.forEach((key) => {
       if (obj.hasOwnProperty(key)) {
         orderedObj[key] = obj[key];
       }
@@ -239,7 +293,7 @@ exports.getGradesStudent = async (id, idUser) => {
   };
 
   // Reorder columns for each object in the array
-  const newData = tmp.map(item => reorderColumns(item, structure));
+  const newData = tmp.map((item) => reorderColumns(item, structure));
 
   return newData;
 };
@@ -254,4 +308,30 @@ exports.getNotifications = async (id) => {
 
 exports.setReadNotifications = async (notifications) => {
   return await classRepository.setReadNotifications(notifications);
+};
+// get invite code
+exports.getInviteCode = async (id) => {
+  return await classRepository.getInviteCode(id);
+};
+
+// update invite code
+exports.resetInviteCode = async (id) => {
+  const { randomUUID } = new ShortUniqueId({ length: 10 });
+  const code = randomUUID();
+  return await classRepository.updateInviteCode(id, code);
+};
+
+//get class infomation by code, use the id to count number of students and teachers in enrollment table, then use teacherId to get teacher's name
+exports.getClassByCode = async (code) => {
+  const result = await classRepository.getClassByCode(code);
+  if (result == null) return null;
+  const classId = result[0].id;
+  const countStudent = await enrollmentService.countStudent(classId);
+  const countTeacher = await enrollmentService.countTeacher(classId);
+
+  return {
+    ...result,
+    countStudent: countStudent,
+    countTeacher: countTeacher,
+  };
 };

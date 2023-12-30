@@ -27,7 +27,6 @@ exports.getListStudentIds = async (req, res) => {
 exports.insertAClass = async (req, res) => {
   try {
     const { className, createdBy, description, title, topic, room } = req.body;
-
     const insertId = await classService.insertAClass(
       className,
       createdBy,
@@ -82,7 +81,6 @@ exports.getTeacherClass = async (req, res) => {
 
 exports.getGrades = async (req, res) => {
   try {
-
     const { id } = req.params;
     const user = await classService.getGrades(id);
     res.json(user);
@@ -93,10 +91,14 @@ exports.getGrades = async (req, res) => {
 
 exports.updateGrade = async (req, res) => {
   try {
-
     const { data } = req.body;
     const filteredData = Object.keys(data).reduce((acc, key) => {
-      if (key !== 'id' && key !== 'fullname' && key !== 'index' && key !== 'sum') {
+      if (
+        key !== "id" &&
+        key !== "fullname" &&
+        key !== "index" &&
+        key !== "sum"
+      ) {
         acc[key] = data[key];
       }
       return acc;
@@ -108,21 +110,20 @@ exports.updateGrade = async (req, res) => {
     const updates = Object.keys(transformedArray[0]).map((key) => ({
       score: transformedArray[0][key],
       type: key,
-      id: id
+      id: id,
     }));
 
-    const finalArray = updates.map(item => ({
+    const finalArray = updates.map((item) => ({
       ...item,
-      score: item.score === "" ? null : item.score
+      score: item.score === "" ? null : item.score,
     }));
-    console.log(JSON.stringify(finalArray) + " array")
+    console.log(JSON.stringify(finalArray) + " array");
     const user = await classService.updateGrade(finalArray);
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
   }
 };
-
 
 exports.updateGrades = async (req, res) => {
   try {
@@ -131,15 +132,20 @@ exports.updateGrades = async (req, res) => {
       const keys = Object.keys(item);
 
       keys.forEach((key) => {
-        if (key !== 'id' && key !== 'fullname' && key !== 'index' && key !== 'sum') {
+        if (
+          key !== "id" &&
+          key !== "fullname" &&
+          key !== "index" &&
+          key !== "sum"
+        ) {
           acc.push({
             score: item[key],
             type: key,
-            index: item.index
+            index: item.index,
           });
         }
       });
-    
+
       return acc;
     }, []);
 
@@ -153,9 +159,9 @@ exports.updateGrades = async (req, res) => {
 exports.getGradeStructures = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(id)
+    console.log(id);
     const user = await classService.getGradeStructures(id);
-    console.log(JSON.stringify(user))
+    console.log(JSON.stringify(user));
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
@@ -167,7 +173,13 @@ exports.addGradeStructure = async (req, res) => {
     const { idClass, percentage, value, orderValue } = req.body;
     const students = await classService.getAllStudents(idClass);
 
-    const user = await classService.addGradeStructure(idClass, percentage, value, orderValue, students);
+    const user = await classService.addGradeStructure(
+      idClass,
+      percentage,
+      value,
+      orderValue,
+      students
+    );
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
@@ -178,8 +190,11 @@ exports.updateRowGradeStructures = async (req, res) => {
   try {
     const { idClass, gradeStructure } = req.body;
     gradeStructure.sort((a, b) => a.id - b.id);
-   
-    const user = await classService.updateRowGradeStructures(idClass, gradeStructure);
+
+    const user = await classService.updateRowGradeStructures(
+      idClass,
+      gradeStructure
+    );
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
@@ -189,8 +204,11 @@ exports.updateRowGradeStructures = async (req, res) => {
 exports.updateGradeStructure = async (req, res) => {
   try {
     const { idClass, gradeStructure } = req.body;
-    console.log(gradeStructure)
-    const user = await classService.updateGradeStructure(idClass, gradeStructure);
+    console.log(gradeStructure);
+    const user = await classService.updateGradeStructure(
+      idClass,
+      gradeStructure
+    );
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
@@ -202,7 +220,13 @@ exports.finalGradeStructure = async (req, res) => {
     const { idClass, url, gradeStructure } = req.body;
     const content = "You have new score";
     const idUser = await classService.getAllStudents(idClass);
-    const user = await classService.finalGradeStructure(idClass, idUser, content, url, gradeStructure);
+    const user = await classService.finalGradeStructure(
+      idClass,
+      idUser,
+      content,
+      url,
+      gradeStructure
+    );
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
@@ -214,13 +238,18 @@ exports.deleteGradeStructure = async (req, res) => {
     const { idClass, id, gradeStructure, deletedValue } = req.body;
 
     const students = await classService.getAllStudents(idClass);
-    const user = await classService.deleteGradeStructure(idClass, gradeStructure, id, students, deletedValue);
+    const user = await classService.deleteGradeStructure(
+      idClass,
+      gradeStructure,
+      id,
+      students,
+      deletedValue
+    );
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
   }
 };
-
 
 exports.getGradesStudent = async (req, res) => {
   try {
@@ -259,5 +288,41 @@ exports.setReadNotifications = async (req, res) => {
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
+  }
+};
+
+//get invite code
+exports.getInviteCode = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const code = await classService.getInviteCode(id);
+    res.json(code);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+//update invite code
+exports.resetInviteCode = async (req, res) => {
+  try {
+    const { classId } = req.body;
+    //use random uid to generate code invite
+    const result = await classService.resetInviteCode(classId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+
+//get class info by invite code
+exports.getClassByCode = async (req, res) => {
+  try {
+    const { code } = req.body;
+    const result = await classService.getClassByCode(code);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
   }
 };
