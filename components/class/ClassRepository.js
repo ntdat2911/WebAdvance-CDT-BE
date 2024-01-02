@@ -17,6 +17,14 @@ exports.getListStudentIds = async (id) => {
   return result[0].length > 0 ? result[0] : null;
 };
 
+exports.getParticipants = async (id) => {
+  const result = await db.connection.execute(
+    "select accounts.fullname, enrollment.role from enrollment JOIN accounts ON enrollment.userId = accounts.id where classId = ?",
+    [id]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+
 exports.insertAClass = async (
   className,
   createdBy,

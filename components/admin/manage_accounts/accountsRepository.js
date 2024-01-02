@@ -57,22 +57,20 @@ exports.mapStudentId = async (id, userId) => {
 };
 
 exports.mapListStudentId = async (listUserIds) => {
-  try {
-    const results = [];
-    for (let i = 0; i < listUserIds.length; i++) {
-      const iduser = listUserIds[i].iduser;
-      const id = listUserIds[i].id;
-      
-      const result = await db.connection.execute(
+  for (let i = 0; i < listUserIds.length; i++) {
+    const iduser = listUserIds[i].idUser;
+    const id = listUserIds[i].id;
+    console.log(iduser, id)
+    try {
+      await db.connection.execute(
         "UPDATE studentId SET iduser=? WHERE id=?", [iduser, id]
       );
-
-      results.push(result[0]);
+    } catch (error) {
+      console.error('Lỗi trong quá trình cập nhật:', error.message);
+      return null;
     }
-    return results[0].length > 0 ? results[0] : null;
-  } catch (error) {
-    console.error('Lỗi trong quá trình cập nhật:', error.message);
-    return null;
+
   }
+  return true;
 };
 

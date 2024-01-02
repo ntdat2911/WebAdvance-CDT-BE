@@ -6,6 +6,7 @@ const enrollmentController = require("./user_class/EnrollmentController");
 
 router.get("/getAClass/:id", classController.getAClass);
 router.get("/getListStudentIds/:id", classController.getListStudentIds);
+router.get("/getParticipants/:id", classController.getParticipants);
 router.post("/getStudentClasses", classController.getStudentClass);
 router.post("/getTeacherClasses", classController.getTeacherClass);
 //cofig class info

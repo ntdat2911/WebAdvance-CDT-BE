@@ -10,6 +10,13 @@ exports.getListStudentIds = async (id) => {
   return await classRepository.getListStudentIds(id);
 };
 
+exports.getParticipants = async (id) => {
+   const result = await classRepository.getParticipants(id);
+   console.log(result)
+   return result;
+};
+
+
 exports.insertAClass = async (
   className,
   createdBy,
@@ -232,16 +239,7 @@ exports.getGradesStudent = async (id, idUser) => {
   const lengthGrade = await classRepository.getLengthGrades(id);
 
   if (lengthGrade == null) {
-    const tmp = await classRepository.getAllNameStudents(id);
-    tmp.forEach((item, id) => {
-      item.id = id + 1;
-    });
-    const final = tmp.map((obj) => {
-      let { id, ...rest } = obj;
-      return { id, ...rest };
-    });
-
-    return final;
+    return [];
   }
   const result = await classRepository.getGradesStudent(id, idUser);
   const result2 = await classRepository.getGradeStructuresStudent(id);

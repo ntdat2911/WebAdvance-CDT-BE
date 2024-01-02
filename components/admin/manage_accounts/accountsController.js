@@ -81,18 +81,7 @@ exports.mapListStudentId = async (req, res) => {
   try {
     const { data } = req.body;
 
-    const validUsers = data.map(item => {
-      if (item.iduser === undefined) {
-        item.iduser = null;
-      }
-      return item;
-    });
-
-    if (validUsers.length === 0) {
-      res.status(200).json("Success");
-    }
-
-    const result = await userService.mapListStudentId(validUsers);
+    const result = await userService.mapListStudentId(data);
     res.status(200).json("Success");
   } catch (error) {
     res.status(500).json(error);

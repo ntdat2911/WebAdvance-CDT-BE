@@ -24,6 +24,18 @@ exports.getListStudentIds = async (req, res) => {
   }
 };
 
+exports.getParticipants = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await classService.getParticipants(id);
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 exports.insertAClass = async (req, res) => {
   try {
     const { className, createdBy, description, title, topic, room } = req.body;
