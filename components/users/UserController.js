@@ -5,7 +5,6 @@ exports.getOneUser = async (req, res) => {
     const { id } = req.params;
 
     const user = await userService.getUser(id);
-    console.log(user);
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
@@ -25,7 +24,7 @@ exports.update = async (req, res) => {
 
 exports.setStudentId = async (req, res) => {
   try {
-    const { id, idUser} = req.body;
+    const { id, idUser } = req.body;
     userService.setStudentId(id, idUser);
     res.status(200).json("Success");
   } catch (error) {
@@ -44,8 +43,18 @@ exports.getStudentIds = async (req, res) => {
 
 exports.getStudentId = async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const result = await userService.getStudentId(id);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.updateImage = async (req, res) => {
+  try {
+    const { id, image } = req.body;
+    const result = await userService.updateImage(id, image);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);

@@ -1,7 +1,9 @@
 const userRepository = require("./UserRepository");
 
 exports.getUser = async (id) => {
-  return await userRepository.getUser(id);
+  let user = await userRepository.getUser(id);
+  delete user[0].password;
+  return user;
 };
 
 exports.updateUser = async (id, name, email, avatar) => {
@@ -18,4 +20,9 @@ exports.getStudentIds = async () => {
 
 exports.getStudentId = async (id) => {
   return await userRepository.getStudentId(id);
+};
+
+// update image in account
+exports.updateImage = async (id, image) => {
+  return await userRepository.updateImage(id, image);
 };

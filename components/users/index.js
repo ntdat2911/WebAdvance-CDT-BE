@@ -4,10 +4,7 @@ const router = express.Router();
 const userController = require("./UserController");
 const middlewareToken = require("../../middleware/auth");
 
-router.get(
-  "/getUser/:id",
-  userController.getOneUser
-);
+router.get("/getUser/:id", userController.getOneUser);
 router.post("/update", userController.update);
 
 router.post("/setStudentId", userController.setStudentId);
@@ -16,4 +13,6 @@ router.post("/setStudentId", userController.setStudentId);
 router.get("/getStudentIds", userController.getStudentIds);
 router.get("/getStudentId/:id", userController.getStudentId);
 
+//update image
+router.put("/updateImage", userController.updateImage);
 module.exports = router;

@@ -40,3 +40,12 @@ exports.getStudentId = async (id) => {
 
   return result[0].length > 0 ? result[0] : null;
 };
+
+//update image in account
+exports.updateImage = async (id, image) => {
+  const result = await db.connection.execute(
+    "update accounts set image=? where id=?",
+    [image, id]
+  );
+  return result[0];
+};
