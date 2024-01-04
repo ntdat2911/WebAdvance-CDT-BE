@@ -3,7 +3,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const passport = require("./passport");
-const session = require('express-session');
+const session = require("express-session");
 const authRoutes = require("./components/_auth");
 const userRoutes = require("./components/users");
 const verifyRoutes = require("./components/verify");
@@ -19,14 +19,14 @@ const middleware = require("./middleware/auth");
 const app = express();
 const PORT = process.env.PORT || 5000;
 const CLIENT_HOST = process.env.CLIENT_HOST || "http://localhost:3000";
-let onlineUsers = []
+let onlineUsers = [];
 require("dotenv").config();
 
 // const pubClient = createClient({ host: "localhost", port: 6379 });
 // const subClient = pubClient.duplicate();
-console.log(CLIENT_HOST)
+console.log(CLIENT_HOST);
 const io = new Server({
-  cors: "http://localhost:3000"
+  cors: CLIENT_HOST,
 });
 
 app.use(express.json());
@@ -45,11 +45,13 @@ app.get("/", (req, res) => {
   res.send("Hello");
 });
 
-app.use(session({
-  secret: 'very secret keyboard cat',
-  resave: false,
-  saveUninitialized: false,
-}));
+app.use(
+  session({
+    secret: "very secret keyboard cat",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 const addNewUser = (userId, socketId) => {
   !onlineUsers.some((user) => user.userId === userId) &&
@@ -65,49 +67,47 @@ const getUser = (userId) => {
 };
 
 const newNotiList = async (userId) => {
-  const result = await classRepository.getNotifications(userId)
-  console.log(result, " chuan bi gui")
-  return result
-}
-let count = 0
+  const result = await classRepository.getNotifications(userId);
+  console.log(result, " chuan bi gui");
+  return result;
+};
+let count = 0;
 io.on("connection", (socket) => {
   // let myinterval = setInterval(function() {
   //   console.log("New connection ", onlineUsers);
   // }, 3000);
   // myinterval
   count++;
-  console.log("connected: ", count)
+  console.log("connected: ", count);
   socket.on("newUser", (userId) => {
     addNewUser(userId, socket.id);
     console.log("Online users: ", onlineUsers);
-  })
+  });
 
   socket.on("sendClassNotification", async ({ data }) => {
-    console.log(data, " CLASS NOTI DATA")
+    console.log(data, " CLASS NOTI DATA");
     for (const rev of data.receiverId) {
-      console.log(rev.userId)
+      console.log(rev.userId);
       const receiver = getUser(rev.userId);
-      console.log(receiver)
+      console.log(receiver);
       if (receiver) {
         io.to(receiver.socketId).emit("getNotification", {
           content: await newNotiList(receiver.userId),
         });
       }
     }
-
   });
 
   socket.on("sendNotification", ({ senderId, receiverId, type }) => {
     const receiver = getUser(receiverId);
-    console.log(type)
+    console.log(type);
     io.to(receiver.socketId).emit("getNotification", {
       content: newNotiList(receiver.socketId),
     });
-
   });
 
   socket.on("disconnect", (userId) => {
-    console.log("USER disconnect ", onlineUsers)
+    console.log("USER disconnect ", onlineUsers);
     removeUser(userId);
   });
 });
