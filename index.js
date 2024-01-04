@@ -15,6 +15,7 @@ const { Server } = require("socket.io");
 const classRepository = require("./components/class/ClassRepository");
 
 const middleware = require("./middleware/auth");
+const { createServer } = require("http");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,8 +26,12 @@ require("dotenv").config();
 // const pubClient = createClient({ host: "localhost", port: 6379 });
 // const subClient = pubClient.duplicate();
 console.log(CLIENT_HOST);
-const io = new Server({
-  cors: CLIENT_HOST,
+const httpServer = createServer();
+const io = new Server(httpServer, {
+  cors: {
+    origin: CLIENT_HOST,
+    methods: ["GET", "POST"],
+  },
 });
 
 app.use(express.json());
