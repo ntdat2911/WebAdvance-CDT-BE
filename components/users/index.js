@@ -11,7 +11,7 @@ router.post("/setStudentId", userController.setStudentId);
 
 //get List studentId
 router.get("/getStudentIds", userController.getStudentIds);
-router.get("/getStudentId/:id", userController.getStudentId);
+router.post("/getStudentId", userController.getStudentId);
 
 //update image
 router.put("/updateImage", userController.updateImage);

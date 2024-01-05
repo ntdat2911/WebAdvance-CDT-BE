@@ -56,7 +56,6 @@ exports.insertAClass = async (req, res) => {
 exports.updateAClass = async (req, res) => {
   try {
     const { classId, className, description, title, topic, room } = req.body;
-    console.log(classId, className, description, title, topic, room);
     const respone = await classService.updateAClass(
       classId,
       className,
@@ -93,8 +92,18 @@ exports.getTeacherClass = async (req, res) => {
 
 exports.getGrades = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params;  
     const user = await classService.getGrades(id);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.getStudentIds = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await classService.getStudentIds(id);
     res.json(user);
   } catch (error) {
     res.status(500).json(error);
@@ -129,7 +138,7 @@ exports.updateGrade = async (req, res) => {
       ...item,
       score: item.score === "" ? null : item.score,
     }));
-    console.log(JSON.stringify(finalArray) + " array");
+
     const user = await classService.updateGrade(finalArray);
     res.json(user);
   } catch (error) {
@@ -167,6 +176,27 @@ exports.updateGrades = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+exports.updateStudentId = async (req, res) => {
+  try {
+    const { data, studentId } = req.body;
+    const user = await classService.updateStudentId(data, studentId);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+}
+
+exports.updateStudentIds = async (req, res) => {
+  try {
+    const { data } = req.body;
+    const user = await classService.updateStudentIds(data);
+    console.log(JSON.stringify(user));
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+}
 
 exports.getGradeStructures = async (req, res) => {
   try {

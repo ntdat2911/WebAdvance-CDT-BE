@@ -100,6 +100,14 @@ exports.getTeacherClass = async (id) => {
   }
 };
 
+exports.getStudentIds = async (id) => {
+  const result = await db.connection.execute(
+    "select enrollment.id, accounts.fullname, enrollment.studentId from enrollment inner join accounts where enrollment.userId = accounts.id and enrollment.role='student' and  enrollment.classId=?",
+    [id]
+  );
+  return result[0];
+};
+
 exports.getLengthGrades = async (idClass) => {
   const result = await db.connection.execute(
     "SELECT * from grade where idClass = ?",
@@ -136,6 +144,31 @@ exports.updateGrades = async (data) => {
       await db.connection.execute(
         "UPDATE grade SET score=? WHERE type = ? AND idUser = ?",
         [update.score, update.type, update.index]
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  return true;
+};
+
+exports.updateStudentId = async (data, id) => {
+  try {
+    await db.connection.execute(
+      "UPDATE enrollment SET studentId=? WHERE id = ?",
+      [id, data.id]
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.updateStudentIds = async (data) => {
+  for (const update of data) {
+    try {
+      await db.connection.execute(
+        "UPDATE enrollment SET studentId=? WHERE id = ?",
+        [update.studentId, update.id]
       );
     } catch (error) {
       console.log(error);

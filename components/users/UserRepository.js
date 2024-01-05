@@ -16,10 +16,10 @@ exports.updateUser = async (name, email, image, id) => {
   return result[0];
 };
 
-exports.setStudentId = async (id, idUser) => {
+exports.setStudentId = async (id, idUser, idClass) => {
   const result = await db.connection.execute(
-    "update studentId set idUser=? where id=?",
-    [idUser, id]
+    "update enrollment set studentId=? where userId=? and classId=?",
+    [id,idUser, idClass]
   );
   return result[0];
 };
@@ -32,10 +32,10 @@ exports.getStudentIds = async () => {
   return result[0].length > 0 ? result[0] : null;
 };
 
-exports.getStudentId = async (id) => {
+exports.getStudentId = async (id, classId) => {
   const result = await db.connection.execute(
-    "select idstudent from studentId where iduser = ?",
-    [id]
+    "select studentId from enrollment where userId = ? and classId = ?",
+    [id, classId]
   );
 
   return result[0].length > 0 ? result[0] : null;

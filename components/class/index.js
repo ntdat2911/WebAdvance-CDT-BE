@@ -26,8 +26,11 @@ router.post(
 
 //teacher
 router.get("/getGrades/:id", classController.getGrades);
+router.get("/getStudentIds/:id", classController.getStudentIds);
 router.post("/updateGrade", classController.updateGrade);
 router.post("/updateGrades", classController.updateGrades); //update by FILE CSV
+router.post("/updateStudentId", classController.updateStudentId);
+router.post("/updateStudentIds", classController.updateStudentIds); //update by FILE CSV
 router.get("/getGradeStructures/:id", classController.getGradeStructures);
 router.post("/addGradeStructure", classController.addGradeStructure);
 router.post(

@@ -72,11 +72,17 @@ exports.updateActive = async (id, status) => {
   return await classRepository.updateActive(id, status);
 };
 
+exports.getStudentIds = async (id) => {
+  return await classRepository.getStudentIds(id);
+};
+
 exports.getGrades = async (id) => {
   const lengthGrade = await classRepository.getLengthGrades(id);
 
   if (lengthGrade == null) {
     const tmp = await classRepository.getAllNameStudents(id);
+    if(tmp == null)
+      return [];
     tmp.forEach((item, id) => {
       item.id = id + 1;
     });
@@ -149,6 +155,16 @@ exports.updateGrade = async (data) => {
 
 exports.updateGrades = async (data) => {
   const result = await classRepository.updateGrades(data);
+  return result;
+};
+
+exports.updateStudentId = async (data, id) => {
+  const result = await classRepository.updateStudentId(data, id);
+  return result;
+};
+
+exports.updateStudentIds = async (data) => {
+  const result = await classRepository.updateStudentIds(data);
   return result;
 };
 

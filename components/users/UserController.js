@@ -24,8 +24,8 @@ exports.update = async (req, res) => {
 
 exports.setStudentId = async (req, res) => {
   try {
-    const { id, idUser } = req.body;
-    userService.setStudentId(id, idUser);
+    const { id, idUser, idClass } = req.body;
+    userService.setStudentId(id, idUser, idClass);
     res.status(200).json("Success");
   } catch (error) {
     res.status(500).json(error);
@@ -43,8 +43,9 @@ exports.getStudentIds = async (req, res) => {
 
 exports.getStudentId = async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await userService.getStudentId(id);
+    const { id, classId } = req.body;
+    const result = await userService.getStudentId(id, classId);
+    console.log(result)
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
