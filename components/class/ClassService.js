@@ -11,11 +11,9 @@ exports.getListStudentIds = async (id) => {
 };
 
 exports.getParticipants = async (id) => {
-   const result = await classRepository.getParticipants(id);
-   console.log(result)
-   return result;
+  const result = await classRepository.getParticipants(id);
+  return result;
 };
-
 
 exports.insertAClass = async (
   className,
@@ -348,4 +346,16 @@ exports.getClassByCode = async (code) => {
     countStudent: countStudent,
     countTeacher: countTeacher,
   };
+};
+
+//get class created by user
+exports.getInfoTeacherOfClass = async (id) => {
+  const result = await classRepository.getInfoTeacherOfClass(id);
+  return result;
+};
+
+//check user in class by email
+exports.checkUserInClass = async (email, id) => {
+  const result = await classRepository.checkUserInClass(email, id);
+  return result;
 };

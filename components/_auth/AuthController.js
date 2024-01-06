@@ -98,7 +98,12 @@ exports.callbackGoogle = async (req, res) => {
     await authorizeService.register(displayName, email, hash, true);
   }
   const user = await authorizeService.getUserByEmail(email);
-  const sendUser = { id: user[0].id, email: email, fullname: displayName };
+  const sendUser = {
+    id: user[0].id,
+    email: email,
+    fullname: displayName,
+    image: user[0].image,
+  };
   const token = jwt.sign(
     { email: email, role: "user" },
     process.env.ACCESS_TOKEN_SECRET,

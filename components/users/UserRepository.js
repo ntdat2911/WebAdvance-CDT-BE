@@ -8,10 +8,10 @@ exports.getUser = async (id) => {
   return result[0].length > 0 ? result[0] : null;
 };
 
-exports.updateUser = async (name, email, image, id) => {
+exports.updateUser = async (name, email, birthday, id) => {
   const result = await db.connection.execute(
-    "update accounts set fullname=?,email=?,image=? where id=?",
-    [name, email, image, id]
+    "update accounts set fullname=?,email=?,birthday=? where id=?",
+    [name, email, birthday, id]
   );
   return result[0];
 };

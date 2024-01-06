@@ -21,11 +21,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const CLIENT_HOST = process.env.CLIENT_HOST || "http://localhost:3000";
 let onlineUsers = [];
+const socketPort = process.env.SOCKET_PORT || 3500;
+
 require("dotenv").config();
 
 // const pubClient = createClient({ host: "localhost", port: 6379 });
 // const subClient = pubClient.duplicate();
-console.log(CLIENT_HOST);
 const httpServer = createServer();
 const io = new Server(httpServer, {
   cors: {
@@ -125,7 +126,9 @@ app.use("/", middleware.verifyToken, userRoutes);
 app.use("/auth", verifyRoutes);
 app.use("/admin", middleware.verifyToken, adminRoutes);
 app.use("/class", middleware.verifyToken, classRoutes);
-io.listen(3500);
+
+io.listen(socketPort, () => console.log(`Socket running at ${socketPort}`));
+
 app.listen(PORT, () => console.log(`Server running at ${PORT}`));
 
 module.exports = app;

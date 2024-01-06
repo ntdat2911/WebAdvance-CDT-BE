@@ -17,10 +17,7 @@ exports.verifyToken = (req, res, next) => {
           if (userRole == "admin") {
             console.log("Vao duoc admin");
             next();
-          } else if (
-            userRole == "user" ||
-            userRole == "student" //&&req.baseUrl.startsWith("/")
-          ) {
+          } else if (userRole == "user") {
             console.log("Vao duoc user");
             next();
           } else if (req.baseUrl.startsWith("/class")) {
@@ -35,6 +32,7 @@ exports.verifyToken = (req, res, next) => {
         }
       });
     } else {
+      console.log("Unauthorized");
       return res.status(401).json("You're not authenticated");
     }
   } catch (error) {

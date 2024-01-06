@@ -13,9 +13,8 @@ exports.getOneUser = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    console.log(req.body);
-    const { id, name, email, avatar } = req.body;
-    userService.updateUser(id, name, email, avatar);
+    const { id, fullname, email, birthday } = req.body;
+    userService.updateUser(id, fullname, email, birthday);
     res.status(200).json("Success");
   } catch (error) {
     res.status(500).json(error);

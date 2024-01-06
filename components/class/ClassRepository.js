@@ -19,7 +19,7 @@ exports.getListStudentIds = async (id) => {
 
 exports.getParticipants = async (id) => {
   const result = await db.connection.execute(
-    "select accounts.fullname, enrollment.role from enrollment JOIN accounts ON enrollment.userId = accounts.id where classId = ?",
+    "select accounts.image, accounts.fullname, enrollment.role from enrollment JOIN accounts ON enrollment.userId = accounts.id where classId = ?",
     [id]
   );
   return result[0].length > 0 ? result[0] : null;
@@ -82,7 +82,7 @@ exports.getAllNameStudents = async (id) => {
 
 exports.getStudentClass = async (id) => {
   const result = await db.connection.execute(
-    "SELECT enrollment.*, class.* FROM enrollment INNER JOIN class ON enrollment.classId = class.id WHERE enrollment.userId = ? AND enrollment.role = ?",
+    "SELECT enrollment.*, class.* , a.image FROM enrollment INNER JOIN class ON enrollment.classId = class.id INNER JOIN accounts a ON a.id = class.createdBy WHERE enrollment.userId = ? AND enrollment.role = ?",
     [id, "student"]
   );
   return result[0].length > 0 ? result[0] : null;
@@ -388,4 +388,22 @@ exports.getClassByCode = async (code) => {
     [code]
   );
   return result[0].length > 0 ? result[0] : null;
+};
+
+//get class created by user
+exports.getInfoTeacherOfClass = async (id) => {
+  const result = await db.connection.execute(
+    "SELECT a.image FROM class c join accounts a on a.id = c.createdBy WHERE createdBy = ? LIMIT 1",
+    [id]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+
+//check user in class by email
+exports.checkUserInClass = async (email, id) => {
+  const result = await db.connection.execute(
+    "SELECT * FROM enrollment e JOIN accounts a ON e.userId = a.id WHERE a.email = ? AND e.classId = ?",
+    [email, id]
+  );
+  return result[0].length > 0 ? true : false;
 };

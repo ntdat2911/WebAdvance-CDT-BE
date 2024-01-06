@@ -1,5 +1,6 @@
 const db = require("../../db/index");
-
+const defaultImage =
+  "https://res.cloudinary.com/dmbwhnml9/image/upload/v1704211985/jumqy1dsog174zoi5ksx.png";
 exports.getUserByEmail = async (email) => {
   const result = await db.connection.execute(
     "select * from accounts where email like ? and sociallogin = ? limit 1",
@@ -35,16 +36,36 @@ exports.isSocial = async (email) => {
 
 exports.insertUser = async (fullname, email, hash) => {
   const result = await db.connection.execute(
-    "insert into accounts (PASSWORD,FULLNAME, EMAIL, IMAGE, SOCIALLOGIN, ROLE, ACTIVE, VERIFIED) VALUES (?,?,?,?,?,?,?,?)",
-    [hash, fullname, email, "default-user.png", "0", "user", 1, "0"]
+    "insert into accounts (PASSWORD,FULLNAME, EMAIL, IMAGE, SOCIALLOGIN, ROLE, ACTIVE, VERIFIED,IMAGE) VALUES (?,?,?,?,?,?,?,?,?)",
+    [
+      hash,
+      fullname,
+      email,
+      "default-user.png",
+      "0",
+      "user",
+      1,
+      "0",
+      defaultImage,
+    ]
   );
   return result[0];
 };
 
 exports.insertUserSocial = async (fullname, email, hash) => {
   const result = await db.connection.execute(
-    "insert into accounts (PASSWORD,FULLNAME, EMAIL, IMAGE, SOCIALLOGIN, ROLE, ACTIVE, VERIFIED) VALUES (?,?,?,?,?,?,?,?)",
-    [hash, fullname, email, "default-user.png", "1", "user", 1, "0"]
+    "insert into accounts (PASSWORD,FULLNAME, EMAIL, IMAGE, SOCIALLOGIN, ROLE, ACTIVE, VERIFIED,IMAGE) VALUES (?,?,?,?,?,?,?,?,?)",
+    [
+      hash,
+      fullname,
+      email,
+      "default-user.png",
+      "1",
+      "user",
+      1,
+      "0",
+      defaultImage,
+    ]
   );
   return result[0];
 };

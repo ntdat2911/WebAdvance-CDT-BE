@@ -52,4 +52,12 @@ router.post("/updateGrade", classController.updateGrade);
 //notificaiton
 router.post("/getNotifications", classController.getNotifications);
 router.post("/setReadNotifications", classController.setReadNotifications);
+
+//get class created by user
+router.post("/getInfoTeacherOfClass", classController.getInfoTeacherOfClass);
+
+//check user in class by email
+router.post("/checkUserInClass", classController.checkUserInClass);
+
+router.post("/inviteByEmail", enrollmentController.inviteByEmail);
 module.exports = router;

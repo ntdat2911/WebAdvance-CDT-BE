@@ -368,3 +368,26 @@ exports.getClassByCode = async (req, res) => {
     console.log(error);
   }
 };
+//get info teacher of class
+exports.getInfoTeacherOfClass = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const result = await classService.getInfoTeacherOfClass(id);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+
+//check user in class by email
+exports.checkUserInClass = async (req, res) => {
+  try {
+    const { email, classId } = req.body;
+    const result = await classService.checkUserInClass(email, classId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
