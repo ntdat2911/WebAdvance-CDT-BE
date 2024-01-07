@@ -24,7 +24,7 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const user = await authorizeService.getUserByEmail(req.body.email);
+  const user = await authorizeService.getUserByEmail(req.body.email, "0");
 
   if (!user) {
     res.json("No user found");
@@ -97,13 +97,15 @@ exports.callbackGoogle = async (req, res) => {
   if (!(await authorizeService.checkIsSocial(email))) {
     await authorizeService.register(displayName, email, hash, true);
   }
-  const user = await authorizeService.getUserByEmail(email);
-  const sendUser = {
+  const user = await authorizeService.getUserByEmail(email, "1");
+
+  const sendUser = [{
     id: user[0].id,
     email: email,
     fullname: displayName,
     image: user[0].image,
-  };
+    role: user[0].role
+  }];
   const token = jwt.sign(
     { email: email, role: "user" },
     process.env.ACCESS_TOKEN_SECRET,
@@ -126,10 +128,15 @@ exports.callbackFacebook = async (req, res) => {
   const password = "facebook account";
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
-  if (!(await authorizeService.checkIsSocial(user.facebookId))) {
+  const result = await authorizeService.checkIsSocial(user.facebookId);
+  if (!result) {
+    console.log(user.fullname, " face")
     await authorizeService.register(user.fullname, user.facebookId, hash, true);
   }
-
+  const newRes = result.map((data) => ({
+    ...data, 
+    role: "user"
+  }));
   const token = jwt.sign(
     { fullname: user.fullname, role: "user" },
     process.env.ACCESS_TOKEN_SECRET,
@@ -137,7 +144,7 @@ exports.callbackFacebook = async (req, res) => {
   );
   res.redirect(
     `${CLIENT_URL}/auth/middle-page?token=${token}&user=${encodeURIComponent(
-      JSON.stringify(user)
+      JSON.stringify(newRes)
     )}`
   );
 };

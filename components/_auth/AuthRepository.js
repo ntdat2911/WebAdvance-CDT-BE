@@ -1,10 +1,10 @@
 const db = require("../../db/index");
 const defaultImage =
   "https://res.cloudinary.com/dmbwhnml9/image/upload/v1704211985/jumqy1dsog174zoi5ksx.png";
-exports.getUserByEmail = async (email) => {
+exports.getUserByEmail = async (email, social) => {
   const result = await db.connection.execute(
     "select * from accounts where email like ? and sociallogin = ? limit 1",
-    [email, "0"]
+    [email, social]
   );
   return result[0].length > 0 ? result[0] : null;
 };
@@ -28,10 +28,11 @@ exports.emailExists = async (email) => {
 exports.isSocial = async (email) => {
   const social = "1";
   const result = await db.connection.execute(
-    "select * from accounts where email = ? and sociallogin = ? limit 1",
+    "select id, email, fullname, birthday from accounts where email = ? and sociallogin = ? limit 1",
     [email, social]
   );
-  return result[0].length > 0;
+  console.log(result[0], " res 0")
+  return result[0].length > 0 ? result[0] : false;
 };
 
 exports.insertUser = async (fullname, email, hash) => {
