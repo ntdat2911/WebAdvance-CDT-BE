@@ -4,15 +4,15 @@ const router = express.Router();
 const userController = require("./UserController");
 const middlewareToken = require("../../middleware/auth");
 
-router.get("/getUser/:id", userController.getOneUser);
-router.post("/update", userController.update);
+router.get("/getUser/:id", middlewareToken.verifyToken, userController.getOneUser);
+router.post("/update", middlewareToken.verifyToken, userController.update);
 
-router.post("/setStudentId", userController.setStudentId);
+router.post("/setStudentId", middlewareToken.verifyToken, userController.setStudentId);
 
 //get List studentId
-router.get("/getStudentIds", userController.getStudentIds);
-router.post("/getStudentId", userController.getStudentId);
+router.get("/getStudentIds", middlewareToken.verifyToken, userController.getStudentIds);
+router.post("/getStudentId", middlewareToken.verifyToken, userController.getStudentId);
 
 //update image
-router.put("/updateImage", userController.updateImage);
+router.put("/updateImage", middlewareToken.verifyToken, userController.updateImage);
 module.exports = router;

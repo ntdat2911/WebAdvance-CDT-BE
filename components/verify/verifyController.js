@@ -17,7 +17,7 @@ const smtpTransport = nodemailer.createTransport({
 
 exports.emailAccount = async (req, res) => {
   const email = req.query.email;
-  const link = SERVER_URL + "/auth/verifiedAccount?email=" + email;
+  const link = SERVER_URL + "/verify/verifiedAccount?email=" + email;
   const mailOptions_account = {
     from: "ktphanmem20@gmail.com",
     to: req.query.email,

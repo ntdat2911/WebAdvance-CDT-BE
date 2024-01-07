@@ -122,10 +122,10 @@ io.on("connection", (socket) => {
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/auth", authRoutes);
-app.use("/", middleware.verifyToken, userRoutes);
-app.use("/auth", verifyRoutes);
-app.use("/admin", middleware.verifyToken, adminRoutes);
-app.use("/class", middleware.verifyToken, classRoutes);
+app.use("/", userRoutes);
+app.use("/verify", verifyRoutes);
+app.use("/admin", adminRoutes);
+app.use("/class", classRoutes);
 
 io.listen(socketPort, () => console.log(`Socket running at ${socketPort}`));
 

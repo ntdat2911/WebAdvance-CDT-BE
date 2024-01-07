@@ -3,61 +3,62 @@ const router = express.Router();
 
 const classController = require("./ClassController");
 const enrollmentController = require("./user_class/EnrollmentController");
+const middlewareToken = require("../../middleware/auth")
 
-router.get("/getAClass/:id", classController.getAClass);
-router.get("/getListStudentIds/:id", classController.getListStudentIds);
-router.get("/getParticipants/:id", classController.getParticipants);
-router.post("/getStudentClasses", classController.getStudentClass);
-router.post("/getTeacherClasses", classController.getTeacherClass);
+router.get("/getAClass/:id", middlewareToken.verifyToken, classController.getAClass);
+router.get("/getListStudentIds/:id", middlewareToken.verifyToken, classController.getListStudentIds);
+router.get("/getParticipants/:id",middlewareToken.verifyToken, classController.getParticipants);
+router.post("/getStudentClasses",middlewareToken.verifyToken, classController.getStudentClass);
+router.post("/getTeacherClasses",middlewareToken.verifyToken, classController.getTeacherClass);
 //cofig class info
-router.post("/insertClass", classController.insertAClass);
-router.post("/updateClass", classController.updateAClass);
+router.post("/insertClass",middlewareToken.verifyToken, classController.insertAClass);
+router.post("/updateClass",middlewareToken.verifyToken, classController.updateAClass);
 //invite code
-router.post("/getInviteCode", classController.getInviteCode);
-router.post("/resetInviteCode", classController.resetInviteCode);
-router.post("/getClassByCode", classController.getClassByCode);
+router.post("/getInviteCode",middlewareToken.verifyToken, classController.getInviteCode);
+router.post("/resetInviteCode",middlewareToken.verifyToken, classController.resetInviteCode);
+router.post("/getClassByCode",middlewareToken.verifyToken, classController.getClassByCode);
 
 //
-router.post("/insertEnrollment", enrollmentController.insertEnrollment);
+router.post("/insertEnrollment",middlewareToken.verifyToken, enrollmentController.insertEnrollment);
 router.post(
-  "/getRoleInClass",
+  "/getRoleInClass",middlewareToken.verifyToken,
   enrollmentController.getRoleEnrollmentByUserIdAndClassId
 );
 
 //teacher
-router.get("/getGrades/:id", classController.getGrades);
-router.get("/getStudentIds/:id", classController.getStudentIds);
-router.post("/updateGrade", classController.updateGrade);
-router.post("/updateGrades", classController.updateGrades); //update by FILE CSV
-router.post("/updateStudentId", classController.updateStudentId);
-router.post("/updateStudentIds", classController.updateStudentIds); //update by FILE CSV
-router.get("/getGradeStructures/:id", classController.getGradeStructures);
-router.post("/addGradeStructure", classController.addGradeStructure);
+router.get("/getGrades/:id",middlewareToken.verifyToken, classController.getGrades);
+router.get("/getStudentIds/:id",middlewareToken.verifyToken, classController.getStudentIds);
+router.post("/updateGrade",middlewareToken.verifyToken, classController.updateGrade);
+router.post("/updateGrades",middlewareToken.verifyToken, classController.updateGrades); //update by FILE CSV
+router.post("/updateStudentId",middlewareToken.verifyToken, classController.updateStudentId);
+router.post("/updateStudentIds",middlewareToken.verifyToken, classController.updateStudentIds); //update by FILE CSV
+router.get("/getGradeStructures/:id",middlewareToken.verifyToken, classController.getGradeStructures);
+router.post("/addGradeStructure",middlewareToken.verifyToken, classController.addGradeStructure);
 router.post(
-  "/updateRowGradeStructures",
+  "/updateRowGradeStructures",middlewareToken.verifyToken,
   classController.updateRowGradeStructures
 );
-router.post("/updateGradeStructure", classController.updateGradeStructure);
-router.post("/finalGradeStructure", classController.finalGradeStructure);
-router.post("/deleteGradeStructure", classController.deleteGradeStructure);
+router.post("/updateGradeStructure",middlewareToken.verifyToken, classController.updateGradeStructure);
+router.post("/finalGradeStructure",middlewareToken.verifyToken, classController.finalGradeStructure);
+router.post("/deleteGradeStructure",middlewareToken.verifyToken, classController.deleteGradeStructure);
 
 //student
-router.post("/student/getGrades", classController.getGradesStudent);
+router.post("/student/getGrades",middlewareToken.verifyToken, classController.getGradesStudent);
 router.get(
-  "/student/getGradeStructures/:id",
+  "/student/getGradeStructures/:id",middlewareToken.verifyToken,
   classController.getGradeStructuresStudent
 );
-router.post("/updateGrade", classController.updateGrade);
+router.post("/updateGrade",middlewareToken.verifyToken, classController.updateGrade);
 
 //notificaiton
-router.post("/getNotifications", classController.getNotifications);
-router.post("/setReadNotifications", classController.setReadNotifications);
+router.post("/getNotifications",middlewareToken.verifyToken, classController.getNotifications);
+router.post("/setReadNotifications",middlewareToken.verifyToken, classController.setReadNotifications);
 
 //get class created by user
-router.post("/getInfoTeacherOfClass", classController.getInfoTeacherOfClass);
+router.post("/getInfoTeacherOfClass",middlewareToken.verifyToken, classController.getInfoTeacherOfClass);
 
 //check user in class by email
-router.post("/checkUserInClass", classController.checkUserInClass);
+router.post("/checkUserInClass",middlewareToken.verifyToken, classController.checkUserInClass);
 
-router.post("/inviteByEmail", enrollmentController.inviteByEmail);
+router.post("/inviteByEmail",middlewareToken.verifyToken, enrollmentController.inviteByEmail);
 module.exports = router;
