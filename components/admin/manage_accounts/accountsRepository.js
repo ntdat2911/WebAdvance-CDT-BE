@@ -10,7 +10,7 @@ exports.getAllUsers = async (role) => {
 
 exports.getAllClasses = async () => {
   const result = await db.connection.execute(
-    "select * from class"
+    "select class.id, class.name, accounts.fullname as createdBy, class.title, class.topic, class.room, class.active from class inner join accounts where class.createdBy = accounts.id"
   );
 
   return result[0].length > 0 ? result[0] : null;
@@ -42,28 +42,30 @@ exports.activeClass = async (id, value) => {
 
 exports.getStudentIds = async () => {
   const result = await db.connection.execute(
-    "select * from studentId", []
+    "select enrollment.id,enrollment.classId, accounts.fullname, enrollment.studentId  from enrollment inner join accounts where enrollment.userId=accounts.id and enrollment.role='student'"
+    , []
   );
 
   return result[0].length > 0 ? result[0] : null;
 };
 
-exports.mapStudentId = async (id, userId) => {
+exports.mapStudentId = async (id, studentId) => {
   const result = await db.connection.execute(
-    "update studentId set iduser=? where id=?", [userId, id]
+    "update enrollment set studentId=? where id=?", [studentId, id]
   );
-  console.log(result)
+ 
   return result[0];
 };
 
 exports.mapListStudentId = async (listUserIds) => {
-  for (let i = 0; i < listUserIds.length; i++) {
-    const iduser = listUserIds[i].idUser;
-    const id = listUserIds[i].id;
-    console.log(iduser, id)
+  console.log(listUserIds)
+  for (const value of listUserIds) {
+    const studentId = value.studentId;
+    const id = value.id;
+    console.log(studentId, id)
     try {
       await db.connection.execute(
-        "UPDATE studentId SET iduser=? WHERE id=?", [iduser, id]
+        "UPDATE enrollment SET studentId=? WHERE id=?", [studentId, id]
       );
     } catch (error) {
       console.error('Lỗi trong quá trình cập nhật:', error.message);
