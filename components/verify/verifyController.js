@@ -2,8 +2,8 @@ const nodemailer = require("nodemailer");
 const verifyService = require("./verifyService");
 const jwt = require("jsonwebtoken");
 
-const CLIENT_URL = process.env.CLIENT_HOST || "http://localhost:3000/";
-const SERVER_URL = process.env.SERVER_HOST || "http://localhost:5000/";
+const CLIENT_URL = process.env.CLIENT_HOST || "http://localhost:3000";
+const SERVER_URL = process.env.SERVER_HOST || "http://localhost:5000";
 
 require("dotenv").config();
 
@@ -46,8 +46,7 @@ exports.resetPassword = async (req, res) => {
       { expiresIn: "2h" }
     );
 
-    const link =
-      CLIENT_URL + "/auth/reset-password?token=" + token + "&email=" + email;
+    const link = CLIENT_URL + "/auth/reset-password?token=" + token + "&email=" + email;
     const mailOptions_password = {
       from: "ktphanmem20@gmail.com",
       to: email,

@@ -3,8 +3,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const passport = require("../../passport");
 
-const CLIENT_URL = process.env.CLIENT_HOST || "http://localhost:3000/";
-const SERVER_URL = process.env.SERVER_HOST || "http://localhost:5000/";
+const CLIENT_URL = process.env.CLIENT_HOST || "http://localhost:3000";
+const SERVER_URL = process.env.SERVER_HOST || "http://localhost:5000";
 require("dotenv").config();
 
 exports.register = async (req, res) => {
