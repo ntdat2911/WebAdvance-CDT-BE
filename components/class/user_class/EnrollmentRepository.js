@@ -48,3 +48,12 @@ exports.getEnrollmentByUserIdAndClassId = async (userId, classId) => {
   );
   return result[0].length > 0 ? result[0][0] : null;
 };
+
+// get id of enrollment by userId and classId
+exports.getIdByUserIdAndClassId = async (userId, classId) => {
+  const result = await db.connection.execute(
+    "select id from enrollment where userId = ? and classId = ?",
+    [userId, classId]
+  );
+  return result[0].length > 0 ? result[0][0].id : null;
+};

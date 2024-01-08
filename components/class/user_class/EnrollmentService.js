@@ -35,3 +35,8 @@ exports.getRoleEnrollmentByUserIdAndClassId = async (userId, classId) => {
     classId
   );
 };
+
+// get id of enrollment by userId and classId
+exports.getIdByUserIdAndClassId = async (userId, classId) => {
+  return await enrollmentRepository.getIdByUserIdAndClassId(userId, classId);
+};

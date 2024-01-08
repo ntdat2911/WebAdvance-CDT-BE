@@ -2,6 +2,7 @@ const enrollmentService = require("./EnrollmentService");
 const nodemailer = require("nodemailer");
 const classService = require("../ClassService");
 const jwt = require("jsonwebtoken");
+
 const CLIENT_URL = process.env.CLIENT_URL;
 
 const smtpTransport = nodemailer.createTransport({
@@ -72,6 +73,13 @@ exports.insertEnrollment = async (req, res) => {
   try {
     const { userId, classId, role } = req.body;
     await enrollmentService.insertEnrollment(userId, classId, role);
+    if (role === "student") {
+      //add empty grade for student
+      const getGradeStructures = await classService.getGradeStructures(classId);
+      const gradeStructures = await getGradeStructures.map(async (item) => {
+        await classService.insertGrade(userId, classId, item.percentage);
+      });
+    }
     res.status(200).json("Success");
   } catch (error) {
     res.status(500).json(error);
@@ -94,4 +102,18 @@ exports.getRoleEnrollmentByUserIdAndClassId = async (req, res) => {
   }
 };
 
-// create nodemailer transporter to send email invitation to user
+// get id of enrollment by userId and classId
+exports.getIdByUserIdAndClassId = async (req, res) => {
+  try {
+    const { userId, classId } = req.body;
+
+    const user = await enrollmentService.getIdByUserIdAndClassId(
+      userId,
+      classId
+    );
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};

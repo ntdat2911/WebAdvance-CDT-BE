@@ -26,3 +26,7 @@ exports.getStudentId = async (id, classId) => {
 exports.updateImage = async (id, image) => {
   return await userRepository.updateImage(id, image);
 };
+
+exports.getFullName = async (id) => {
+  return await userRepository.getFullName(id);
+};

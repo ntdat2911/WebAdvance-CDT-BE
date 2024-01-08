@@ -2,6 +2,7 @@ const classRepository = require("./ClassRepository");
 const ShortUniqueId = require("short-unique-id");
 const enrollmentService = require("./user_class/EnrollmentService");
 const userService = require("../users/UserService");
+const e = require("express");
 exports.getAClass = async (id) => {
   return await classRepository.getAClass(id);
 };
@@ -79,8 +80,7 @@ exports.getGrades = async (id) => {
 
   if (lengthGrade == null) {
     const tmp = await classRepository.getAllNameStudents(id);
-    if(tmp == null)
-      return [];
+    if (tmp == null) return [];
     tmp.forEach((item, id) => {
       item.id = id + 1;
     });
@@ -358,4 +358,190 @@ exports.getInfoTeacherOfClass = async (id) => {
 exports.checkUserInClass = async (email, id) => {
   const result = await classRepository.checkUserInClass(email, id);
   return result;
+};
+
+//insert grade
+exports.insertGrade = async (idUser, idClass, type) => {
+  const result = await classRepository.insertGrade(idUser, idClass, type);
+  return result;
+};
+
+//get grade by idUser and idClass and type
+exports.getGradeByIdUserAndIdClassAndType = async (idUser, idClass, type) => {
+  const result = await classRepository.getGradeByIdUserAndIdClassAndType(
+    idUser,
+    idClass,
+    type
+  );
+  return result;
+};
+
+//insert review grade
+exports.insertReviewGrade = async (
+  enrollmentId,
+  selectGradeId,
+  expectedGrade,
+  explanation,
+  userId,
+  url
+) => {
+  const result = await classRepository.insertReviewGrade(
+    enrollmentId,
+    selectGradeId,
+    expectedGrade,
+    explanation
+  );
+  const reviewGradeId = result.insertId;
+  url = url + reviewGradeId;
+  const toId = await classRepository.getTeacherIdByReviewGradeId(reviewGradeId);
+  const fullname = await userService.getFullName(userId);
+  const notiContent = `New request grade from ${fullname[0].fullname}`;
+  await classRepository.addUserNotification(
+    userId,
+    toId[0].userId,
+    notiContent,
+    url
+  );
+  return result;
+};
+
+//get review grade by enrollmentId
+exports.getReviewGrade = async (classId, userId) => {
+  const enrollmentId = await enrollmentService.getIdByUserIdAndClassId(
+    userId,
+    classId
+  );
+  const result = await classRepository.getReviewGradeByEnrollmentId(
+    enrollmentId
+  );
+  const getComments = async (result) => {
+    for (const item of result) {
+      const comment = await classRepository.getCommentByReviewGradeId(
+        item.idReviewGrade
+      );
+      item.comments = comment;
+    }
+  };
+  if (result === null) return null;
+  await getComments(result);
+  return result;
+};
+
+//getCommentByReviewGradeId
+exports.getCommentByReviewGradeId = async (reviewGradeId) => {
+  const result = await classRepository.getCommentByReviewGradeId(reviewGradeId);
+  return result;
+};
+//insert comment
+exports.insertComment = async (reviewGradeId, userId, content, role, url) => {
+  const result = await classRepository.insertComment(
+    reviewGradeId,
+    userId,
+    content
+  );
+  let toId;
+  if (role === "teacher") {
+    toId = await classRepository.getUserIdByReviewGradeId(reviewGradeId);
+  } else if (role === "student") {
+    toId = await classRepository.getTeacherIdByReviewGradeId(reviewGradeId);
+  }
+  const fullname = await userService.getFullName(userId);
+  const notiContent = `You have a new comment from ${fullname[0].fullname}`;
+  await classRepository.addUserNotification(
+    userId,
+    toId[0].userId,
+    notiContent,
+    url
+  );
+  return result;
+};
+//get review grade by idReviewGrade
+exports.getReviewGradeByIdReviewGrade = async (idReviewGrade) => {
+  const result = await classRepository.getReviewGradeByIdReviewGrade(
+    idReviewGrade
+  );
+  return result;
+};
+
+//get review grade by classId
+exports.getReviewGradeByClassId = async (classId) => {
+  const result = await classRepository.getReviewGradeByClassId(classId);
+  const getComments = async (result) => {
+    for (const item of result) {
+      const comment = await classRepository.getCommentByReviewGradeId(
+        item.idReviewGrade
+      );
+      item.comments = comment;
+    }
+  };
+  if (result === null) return null;
+  await getComments(result);
+  return result;
+};
+
+//getUserIdByReviewGradeId
+exports.getUserIdByReviewGradeId = async (reviewGradeId) => {
+  const result = await classRepository.getUserIdByReviewGradeId(reviewGradeId);
+  return result;
+};
+//getTeacherIdByReviewGradeId
+exports.getTeacherIdByReviewGradeId = async (reviewGradeId) => {
+  const result = await classRepository.getTeacherIdByReviewGradeId(
+    reviewGradeId
+  );
+  return result;
+};
+//updateGradeAndStatusOfReviewGrade
+exports.updateGradeAndStatusOfReviewGrade = async (
+  reviewGradeId,
+  grade,
+  status,
+  userId,
+  role,
+  url
+) => {
+  const result = await classRepository.updateGradeAndStatusOfReviewGrade(
+    reviewGradeId,
+    grade,
+    status
+  );
+  let toId;
+  if (role === "teacher") {
+    toId = await classRepository.getUserIdByReviewGradeId(reviewGradeId);
+  } else if (role === "student") {
+    toId = await classRepository.getTeacherIdByReviewGradeId(reviewGradeId);
+  }
+  const fullname = await userService.getFullName(userId);
+  let notiContent;
+  if (status === "done")
+    notiContent = `Final grade from: ${fullname[0].fullname}`;
+  else notiContent = `Updated grade: ${fullname[0].fullname}`;
+  await classRepository.addUserNotification(
+    userId,
+    toId[0].userId,
+    notiContent,
+    url
+  );
+  return result;
+};
+
+//getRoleByReviewGradeId
+exports.getRoleByReviewGradeId = async (reviewGradeId, userId) => {
+  const result1 = await classRepository.checkTeacherInClassByReviewGradeId(
+    reviewGradeId,
+    userId
+  );
+
+  if (result1.length > 0) {
+    return "teacher";
+  }
+  const result2 = await classRepository.checkUserInReviewGrade(
+    reviewGradeId,
+    userId
+  );
+
+  if (result2.length > 0) {
+    return "student";
+  }
+  return null;
 };

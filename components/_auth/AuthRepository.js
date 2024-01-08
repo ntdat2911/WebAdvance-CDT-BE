@@ -31,23 +31,14 @@ exports.isSocial = async (email) => {
     "select id, email, fullname, birthday from accounts where email = ? and sociallogin = ? limit 1",
     [email, social]
   );
-  console.log(result[0], " res 0")
+  console.log(result[0], " res 0");
   return result[0].length > 0 ? result[0] : false;
 };
 
 exports.insertUser = async (fullname, email, hash) => {
   const result = await db.connection.execute(
     "insert into accounts (PASSWORD,FULLNAME, EMAIL, SOCIALLOGIN, ROLE, ACTIVE, VERIFIED,IMAGE) VALUES (?,?,?,?,?,?,?,?)",
-    [
-      hash,
-      fullname,
-      email,
-      "0",
-      "user",
-      1,
-      "0",
-      defaultImage,
-    ]
+    [hash, fullname, email, "0", "user", 1, "0", defaultImage]
   );
   return result[0];
 };
@@ -55,16 +46,7 @@ exports.insertUser = async (fullname, email, hash) => {
 exports.insertUserSocial = async (fullname, email, hash) => {
   const result = await db.connection.execute(
     "insert into accounts (PASSWORD,FULLNAME, EMAIL, SOCIALLOGIN, ROLE, ACTIVE, VERIFIED,IMAGE) VALUES (?,?,?,?,?,?,?,?)",
-    [
-      hash,
-      fullname,
-      email,
-      "1",
-      "user",
-      1,
-      "0",
-      defaultImage,
-    ]
+    [hash, fullname, email, "1", "user", 1, "0", defaultImage]
   );
   return result[0];
 };

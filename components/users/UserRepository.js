@@ -8,6 +8,15 @@ exports.getUser = async (id) => {
   return result[0].length > 0 ? result[0] : null;
 };
 
+//get full name of user
+exports.getFullName = async (id) => {
+  const result = await db.connection.execute(
+    "select fullname from accounts where id = ?",
+    [id]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+
 exports.updateUser = async (name, email, birthday, id) => {
   const result = await db.connection.execute(
     "update accounts set fullname=?,email=?,birthday=? where id=?",
@@ -19,7 +28,7 @@ exports.updateUser = async (name, email, birthday, id) => {
 exports.setStudentId = async (id, idUser, idClass) => {
   const result = await db.connection.execute(
     "update enrollment set studentId=? where userId=? and classId=?",
-    [id,idUser, idClass]
+    [id, idUser, idClass]
   );
   return result[0];
 };

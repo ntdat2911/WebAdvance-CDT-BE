@@ -92,7 +92,7 @@ exports.getTeacherClass = async (req, res) => {
 
 exports.getGrades = async (req, res) => {
   try {
-    const { id } = req.params;  
+    const { id } = req.params;
     const user = await classService.getGrades(id);
     res.json(user);
   } catch (error) {
@@ -138,7 +138,7 @@ exports.updateGrade = async (req, res) => {
       ...item,
       score: item.score === "" ? null : item.score,
     }));
-
+    console.log(finalArray);
     const user = await classService.updateGrade(finalArray);
     res.json(user);
   } catch (error) {
@@ -185,7 +185,7 @@ exports.updateStudentId = async (req, res) => {
   } catch (error) {
     res.status(500).json(error);
   }
-}
+};
 
 exports.updateStudentIds = async (req, res) => {
   try {
@@ -196,7 +196,7 @@ exports.updateStudentIds = async (req, res) => {
   } catch (error) {
     res.status(500).json(error);
   }
-}
+};
 
 exports.getGradeStructures = async (req, res) => {
   try {
@@ -385,6 +385,194 @@ exports.checkUserInClass = async (req, res) => {
   try {
     const { email, classId } = req.body;
     const result = await classService.checkUserInClass(email, classId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+//get grade by idUser and idClass and type
+exports.getAGrade = async (req, res) => {
+  try {
+    const { userId, classId, type } = req.body;
+
+    const result = await classService.getGradeByIdUserAndIdClassAndType(
+      userId,
+      classId,
+      type
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+
+//insert review grade
+exports.insertReviewGrade = async (req, res) => {
+  try {
+    const {
+      enrollmentId,
+      selectGradeId,
+      expectedGrade,
+      explanation,
+      userId,
+      url,
+    } = req.body;
+    const result = await classService.insertReviewGrade(
+      enrollmentId,
+      selectGradeId,
+      expectedGrade,
+      explanation,
+      userId,
+      url
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+
+//get review grade by classId and userId
+exports.getReviewGrade = async (req, res) => {
+  try {
+    const { classId, userId } = req.body;
+    const result = await classService.getReviewGrade(classId, userId);
+    if (result) {
+      result.forEach((element) => {
+        const dateString = element.createdDate;
+        element.createdDate = new Date(dateString).toLocaleString();
+      });
+    }
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+
+//getCommentByReviewGradeId
+exports.getCommentByReviewGradeId = async (req, res) => {
+  try {
+    const { reviewGradeId } = req.body;
+    const result = await classService.getCommentByReviewGradeId(reviewGradeId);
+    if (result) {
+      result.forEach((element) => {
+        if (element.createdDate) {
+          const dateString = element.createdDate;
+          element.createdDate = new Date(dateString).toLocaleString();
+        }
+      });
+    }
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+
+//insert comment
+exports.insertComment = async (req, res) => {
+  try {
+    const { reviewGradeId, userId, content, role, url } = req.body;
+    const result = await classService.insertComment(
+      reviewGradeId,
+      userId,
+      content,
+      role,
+      url
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+//get review grade by idReviewGrade
+exports.getReviewGradeById = async (req, res) => {
+  try {
+    const { idReviewGrade } = req.body;
+    const result = await classService.getReviewGradeByIdReviewGrade(
+      idReviewGrade
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+
+//get review grade by classId
+exports.getReviewGradeByClassId = async (req, res) => {
+  try {
+    const { classId } = req.body;
+    const result = await classService.getReviewGradeByClassId(classId);
+    if (result) {
+      result.forEach((element) => {
+        if (element.createdDate) {
+          const dateString = element.createdDate;
+          element.createdDate = new Date(dateString).toLocaleString();
+        }
+      });
+    }
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+
+//getUserIdByReviewGradeId
+exports.getUserIdByReviewGradeId = async (req, res) => {
+  try {
+    const { reviewGradeId } = req.body;
+    const result = await classService.getUserIdByReviewGradeId(reviewGradeId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+//getTeacherIdByReviewGradeId
+exports.getTeacherIdByReviewGradeId = async (req, res) => {
+  try {
+    const { reviewGradeId } = req.body;
+    const result = await classService.getTeacherIdByReviewGradeId(
+      reviewGradeId
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+//updateGradeAndStatusOfReviewGrade
+exports.updateGradeAndStatusOfReviewGrade = async (req, res) => {
+  try {
+    const { reviewGradeId, grade, status, userId, role, url } = req.body;
+    const result = await classService.updateGradeAndStatusOfReviewGrade(
+      reviewGradeId,
+      grade,
+      status,
+      userId,
+      role,
+      url
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+};
+//get role by reviewGradeId
+exports.getRoleByReviewGradeId = async (req, res) => {
+  try {
+    const { reviewGradeId, userId } = req.body;
+    const result = await classService.getRoleByReviewGradeId(
+      reviewGradeId,
+      userId
+    );
     res.json(result);
   } catch (error) {
     res.status(500).json(error);

@@ -104,11 +104,11 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("sendNotification", ({ senderId, receiverId, type }) => {
+  socket.on("sendNotification", async ({ senderId, receiverId, type }) => {
     const receiver = getUser(receiverId);
     console.log(type);
     io.to(receiver.socketId).emit("getNotification", {
-      content: newNotiList(receiver.socketId),
+      content: await newNotiList(receiver.userId),
     });
   });
 

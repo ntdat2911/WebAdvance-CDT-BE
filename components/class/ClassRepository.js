@@ -131,6 +131,7 @@ exports.updateGrade = async (data) => {
         "UPDATE grade SET score=? WHERE type = ? AND idUser = ?",
         [update.score, update.type, update.id]
       );
+      console.log(update);
     } catch (error) {
       console.log(error);
     }
@@ -309,16 +310,15 @@ exports.addClassNotification = async (idClass, idUser, content, url) => {
   return true;
 };
 
-exports.addUserNotification = async (idClass, idUser, content, url) => {
-  for (const id of idUser) {
-    try {
-      await db.connection.execute(
-        "INSERT INTO notifications (sender,receiver, content, url, type) VALUES (?,?,?,?,?)",
-        [idClass, id.userId, content, url, "user"]
-      );
-    } catch (error) {
-      return false;
-    }
+exports.addUserNotification = async (fromUser, toUser, content, url) => {
+  console.log(fromUser, toUser, content, url);
+  try {
+    await db.connection.execute(
+      "INSERT INTO notifications (sender,receiver, content, url, type) VALUES (?,?,?,?,?)",
+      [fromUser, toUser, content, url, "user"]
+    );
+  } catch (error) {
+    return false;
   }
   return true;
 };
@@ -406,4 +406,121 @@ exports.checkUserInClass = async (email, id) => {
     [email, id]
   );
   return result[0].length > 0 ? true : false;
+};
+
+//insert new grade
+exports.insertGrade = async (idUser, idClass, type) => {
+  const result = await db.connection.execute(
+    "INSERT INTO grade (idUser, idClass, type) VALUES (?,?,?)",
+    [idUser, idClass, type]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+
+//get grade by idUser and idClass and type
+exports.getGradeByIdUserAndIdClassAndType = async (idUser, idClass, type) => {
+  const result = await db.connection.execute(
+    "SELECT id FROM grade WHERE idUser = ? AND idClass = ? AND type = ?",
+    [idUser, idClass, type]
+  );
+
+  return result[0].length > 0 ? result[0][0].id : null;
+};
+
+exports.insertReviewGrade = async (
+  enrollmentId,
+  selectGradeId,
+  expectedGrade,
+  explanation
+) => {
+  const result = await db.connection.execute(
+    "insert into reviewGrade (enrollmentId,selectedGradeId,expectedGrade,explanation,status) values (?,?,?,?,?)",
+    [enrollmentId, selectGradeId, expectedGrade, explanation, "pending"]
+  );
+  return result[0];
+};
+
+//get review grade by enrollmentId
+exports.getReviewGradeByEnrollmentId = async (enrollmentId) => {
+  const result = await db.connection.execute(
+    "select rg.*,g.type from reviewGrade rg join grade g on g.id = rg.selectedGradeId where enrollmentId=?",
+    [enrollmentId]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+//get comment by reviewGradeId
+exports.getCommentByReviewGradeId = async (reviewGradeId) => {
+  const result = await db.connection.execute(
+    "select rc.*,a.fullname,a.image from reviewComment rc join accounts a on rc.fromId = a.id where idReviewGrade=?",
+    [reviewGradeId]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+//insert comment
+exports.insertComment = async (idReviewGrade, fromId, content) => {
+  const result = await db.connection.execute(
+    "insert into reviewComment (idReviewGrade,fromId,content) values (?,?,?)",
+    [idReviewGrade, fromId, content]
+  );
+  return result[0];
+};
+//get review grade by idReviewGrade
+exports.getReviewGradeByIdReviewGrade = async (idReviewGrade) => {
+  const result = await db.connection.execute(
+    "select rg.*,g.type,g.score from reviewGrade rg join grade g on rg.selectedGradeId = g.id  where idReviewGrade=?",
+    [idReviewGrade]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+//get review grade by classId
+exports.getReviewGradeByClassId = async (classId) => {
+  const result = await db.connection.execute(
+    "select rg.*,g.type, a.fullname from reviewGrade rg join enrollment e on rg.enrollmentId = e.id join grade g on g.id = rg.selectedGradeId join accounts a on a.id = e.userId where e.classId=?",
+    [classId]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+//get userId by reviewGradeId
+exports.getUserIdByReviewGradeId = async (reviewGradeId) => {
+  const result = await db.connection.execute(
+    "select e.userId from reviewGrade rg join enrollment e on rg.enrollmentId = e.id where idReviewGrade=?",
+    [reviewGradeId]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+//get teacher id by review grade id
+exports.getTeacherIdByReviewGradeId = async (reviewGradeId) => {
+  const result = await db.connection.execute(
+    "select c.createdBy as userId from reviewGrade rg join enrollment e on rg.enrollmentId = e.id join class c on c.id = e.classId where idReviewGrade=?",
+    [reviewGradeId]
+  );
+  return result[0].length > 0 ? result[0] : null;
+};
+//update grade and status of review grade
+exports.updateGradeAndStatusOfReviewGrade = async (
+  reviewGradeId,
+  grade,
+  status
+) => {
+  const result = await db.connection.execute(
+    "update reviewGrade set grade=?,status=? where idReviewGrade=?",
+    [grade, status, reviewGradeId]
+  );
+  return result[0];
+};
+//check if user in review grade
+exports.checkUserInReviewGrade = async (reviewGradeId, userId) => {
+  const result = await db.connection.execute(
+    "select e.role from reviewGrade rg join enrollment e on rg.enrollmentId = e.id where rg.idReviewGrade=? and e.userId=?",
+    [reviewGradeId, userId]
+  );
+  return result[0].length > 0 ? result[0] : false;
+};
+//check if teacher in class by reviewGradeId
+exports.checkTeacherInClassByReviewGradeId = async (reviewGradeId, userId) => {
+  const result = await db.connection.execute(
+    "select e.role from reviewGrade rg join enrollment e on rg.enrollmentId = e.id join class c on c.id = e.classId where idReviewGrade=? and c.createdBy=?",
+    [reviewGradeId, userId]
+  );
+  return result[0].length > 0 ? result[0] : false;
 };
