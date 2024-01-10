@@ -82,7 +82,7 @@ exports.getAllNameStudents = async (id) => {
 
 exports.getStudentClass = async (id) => {
   const result = await db.connection.execute(
-    "SELECT enrollment.*, class.* , a.image FROM enrollment INNER JOIN class ON enrollment.classId = class.id INNER JOIN accounts a ON a.id = class.createdBy WHERE enrollment.userId = ? AND enrollment.role = ?",
+    "SELECT enrollment.*, class.* , a.image FROM enrollment INNER JOIN class ON enrollment.classId = class.id INNER JOIN accounts a ON a.id = class.createdBy WHERE enrollment.userId = ? AND enrollment.role = ? and class.active=1",
     [id, "student"]
   );
   return result[0].length > 0 ? result[0] : null;
@@ -91,7 +91,7 @@ exports.getStudentClass = async (id) => {
 exports.getTeacherClass = async (id) => {
   try {
     const result = await db.connection.execute(
-      "SELECT enrollment.*, class.* FROM enrollment INNER JOIN class ON enrollment.classId = class.id WHERE enrollment.userId = ? AND enrollment.role = ?",
+      "SELECT enrollment.*, class.* FROM enrollment INNER JOIN class ON enrollment.classId = class.id WHERE enrollment.userId = ? AND enrollment.role = ? and class.active=1",
       [id, "teacher"]
     );
     return result[0].length > 0 ? result[0] : null;

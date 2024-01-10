@@ -258,6 +258,7 @@ exports.getGradesStudent = async (id, idUser) => {
   const result = await classRepository.getGradesStudent(id, idUser);
   const result2 = await classRepository.getGradeStructuresStudent(id);
 
+if(result2 == null) return [];
   const array = result2.map((item) => ({
     id: item.orderValue,
     percentage: item.percentage,
