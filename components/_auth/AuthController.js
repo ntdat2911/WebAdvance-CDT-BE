@@ -3,8 +3,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const passport = require("../../passport");
 
-const CLIENT_URL = process.env.CLIENT_HOST || "http://localhost:3000";
-const SERVER_URL = process.env.SERVER_HOST || "http://localhost:5000";
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+const SERVER_URL = process.env.SERVER_URL || "http://localhost:5000";
 require("dotenv").config();
 
 exports.register = async (req, res) => {
@@ -99,13 +99,15 @@ exports.callbackGoogle = async (req, res) => {
   }
   const user = await authorizeService.getUserByEmail(email, "1");
 
-  const sendUser = [{
-    id: user[0].id,
-    email: email,
-    fullname: displayName,
-    image: user[0].image,
-    role: user[0].role
-  }];
+  const sendUser = [
+    {
+      id: user[0].id,
+      email: email,
+      fullname: displayName,
+      image: user[0].image,
+      role: user[0].role,
+    },
+  ];
   const token = jwt.sign(
     { email: email, role: "user" },
     process.env.ACCESS_TOKEN_SECRET,
@@ -130,12 +132,12 @@ exports.callbackFacebook = async (req, res) => {
   const hash = await bcrypt.hash(password, salt);
   const result = await authorizeService.checkIsSocial(user.facebookId);
   if (!result) {
-    console.log(user.fullname, " face")
+    console.log(user.fullname, " face");
     await authorizeService.register(user.fullname, user.facebookId, hash, true);
   }
   const newRes = result.map((data) => ({
-    ...data, 
-    role: "user"
+    ...data,
+    role: "user",
   }));
   const token = jwt.sign(
     { fullname: user.fullname, role: "user" },
