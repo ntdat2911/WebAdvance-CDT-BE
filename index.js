@@ -14,7 +14,7 @@ const { createServer } = require("http");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const CLIENT_HOST = process.env.CLIENT_HOST || "http://localhost:3000";
+const CLIENT_HOST = process.env.CLIENT_URL || "http://localhost:3000";
 
 require("dotenv").config();
 
