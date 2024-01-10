@@ -18,7 +18,6 @@ const CLIENT_HOST = process.env.CLIENT_HOST || "http://localhost:3000";
 
 require("dotenv").config();
 
-
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.json({ strict: false }));
@@ -42,7 +41,6 @@ app.use(
     saveUninitialized: false,
   })
 );
-
 
 //app.use(passport.authenticate('session'));
 app.use(passport.initialize());
