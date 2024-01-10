@@ -71,6 +71,7 @@ exports.verifyAccount = async (req, res) => {
   console.log(req.query.email);
   res.send("Xac thuc ");
   await verifyService.verifyAccount(req.query.email);
+  res.redirect(CLIENT_URL + "/auth/sign-in");
 };
 
 exports.resetPasswordSuccess = async (req, res) => {
